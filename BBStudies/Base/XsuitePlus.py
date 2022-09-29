@@ -1,11 +1,21 @@
 
-#============================
-from xdeps.refs import ARef
+import json
 import rich
 import re
 import numpy as np
 
 
+import xobjects as xo
+import xtrack as xt
+import xpart as xp
+
+from xdeps.refs import ARef
+
+
+
+
+# ADDING FUNCTIONS TO AREF CLASS:
+#============================================================
 class RenderingKnobs(object):   
     def __init__(self, my_dict):
         for key in my_dict.keys():
@@ -41,7 +51,7 @@ def knobs(self,render = True):
     print_values = {}
     for _var in list(set(sub_knobs)):
         _value = self._manager.containers['vars'][_var]._value
-        print_values[f"'{_var}'"] = _value
+        print_values[f"'vars['{_var}']'"] = _value
 
     printable = {**print_values,**{ 30*'-': 30*'-'},**print_names}
     
@@ -56,5 +66,21 @@ def inspect(self,**kwargs):
     return rich.inspect(self._value,**kwargs)
 
 ARef.inspect = inspect
-ARef.knobs = knobs
-#============================
+ARef.knobs   = knobs
+#============================================================
+
+
+
+# Loading line from file
+#============================================================
+def importLine(fname):
+    
+    with open(fname, 'r') as fid:
+        input_data = json.load(fid)
+    line = xt.Line.from_dict(input_data)
+    #line.particle_ref = xp.Particles.from_dict(input_data['particle_on_tracker_co'])
+    line.particle_ref = xp.Particles(mass0=xp.PROTON_MASS_EV, q0=1,
+                        gamma0=input_data['particle_on_tracker_co']['gamma0'][0])
+    return line
+#============================================================
+
