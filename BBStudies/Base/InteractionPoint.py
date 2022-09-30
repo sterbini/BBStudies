@@ -53,10 +53,10 @@ class InteractionPoint:
         _BB.insert(11,'k3',[self.b2.strong_knl(_dx,_dy)[0][3] for _dx,_dy in zip(_BB['dx'],_BB['dy'])])
         
         # Making sure that the s location for both beams is compatible
-        assert(np.all(np.array(_BB.s) == np.array(self.b2.bb.s_lab)))
+        assert np.all(np.isclose(self.b1.bb.s_lab, self.b2.bb.s_lab, atol=1e-9, rtol=0))
         
         # Making sure that the interpolation at the marker location gives precisely the same value
-        assert(np.all(np.array(_BB[('b2','x_lab')]) == self.b2.get_x_lab(self.b2.bb.s_lab)))
+        assert np.all(np.isclose(_BB[('b2','x_lab')], self.b2.get_x_lab(self.b2.bb.s_lab), atol=1e-9, rtol=0))
         
         return _BB
     

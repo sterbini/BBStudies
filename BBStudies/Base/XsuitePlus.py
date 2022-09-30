@@ -78,9 +78,46 @@ def importLine(fname):
     with open(fname, 'r') as fid:
         input_data = json.load(fid)
     line = xt.Line.from_dict(input_data)
-    #line.particle_ref = xp.Particles.from_dict(input_data['particle_on_tracker_co'])
-    line.particle_ref = xp.Particles(mass0=xp.PROTON_MASS_EV, q0=1,
-                        gamma0=input_data['particle_on_tracker_co']['gamma0'][0])
+    line.particle_ref = xp.Particles.from_dict(input_data['particle_on_tracker_co'])
     return line
 #============================================================
 
+
+# Creating twiss b2 from b4
+#==========================================
+def twiss_b2_from_b4(twiss_b4):
+
+    twiss_b2 = twiss_b4.copy()
+
+    # Flipping x
+    twiss_b2['x']   = -twiss_b2['x']
+
+    # Need to flip py and dpy apparently?
+    twiss_b2['py']  = -twiss_b2['py']
+    twiss_b2['dpy'] = -twiss_b2['dpy']
+
+    # Flipping s
+    lhcb2_L     = twiss_b2.loc['_end_point','s']
+    twiss_b2['s'] = (-twiss_b2['s']+lhcb2_L).mod(lhcb2_L)
+    twiss_b2.loc[['lhcb2ip3_p_','_end_point'],'s'] = lhcb2_L
+    twiss_b2.sort_values(by='s',inplace=True)
+
+    # Changing _den to _dex
+    newIdx = twiss_b2.index.str.replace('_dex','_tmp_dex')
+    newIdx = newIdx.str.replace('_den','_dex')
+    newIdx = newIdx.str.replace('_tmp_dex','_den')
+    twiss_b2.index = newIdx
+
+    return twiss_b2
+#==========================================
+
+
+# Filtering twiss
+#====================================
+def filter_twiss(_twiss,entries = ['drift','..']):
+
+    for ridof in entries:
+        _twiss    =    _twiss[np.invert(_twiss.index.str.contains(ridof,regex=False))]
+
+    return _twiss
+#====================================
