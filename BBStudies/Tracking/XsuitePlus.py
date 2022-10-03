@@ -96,6 +96,13 @@ def twiss_b2_from_b4(twiss_b4):
     twiss_b2['py']  = -twiss_b2['py']
     twiss_b2['dpy'] = -twiss_b2['dpy']
 
+    twiss_b2['dx']   = -twiss_b2['dx']
+    twiss_b2['alfx'] = -twiss_b2['alfx']
+    twiss_b2['alfy'] = -twiss_b2['alfy']
+
+    twiss_b2['mux'] = np.max(twiss_b2['mux']) - twiss_b2['mux']
+    twiss_b2['muy'] = np.max(twiss_b2['muy']) - twiss_b2['muy']
+
     # Flipping s
     lhcb2_L     = twiss_b2.loc['_end_point','s']
     twiss_b2['s'] = (-twiss_b2['s']+lhcb2_L).mod(lhcb2_L)
