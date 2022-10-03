@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import itertools
 
 
-import BBStudies.Base.Constants as cst
+import BBStudies.Physics.Constants as cst
 
 
 

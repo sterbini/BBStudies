@@ -6,7 +6,7 @@ import scipy.special as sciSpec
 import warnings
 
 
-import BBStudies.Base.Constants as cst
+import BBStudies.Physics.Constants as cst
 
 class InteractionPoint:
     def __init__(self,IP,b1,b2):

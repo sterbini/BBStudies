@@ -10,7 +10,7 @@ import numpy as np
 import scipy.integrate as integrate
 import scipy.special as sciSpec
 
-import BBStudies.Base.Constants as cst
+import BBStudies.Physics.Constants as cst
 
 
 

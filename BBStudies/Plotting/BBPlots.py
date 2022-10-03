@@ -6,51 +6,102 @@ import pandas as pd
 import scipy.special as sciSpec
 import numpy as np
 import itertools
+from fractions import Fraction
 
+import BBStudies.Physics.Resonances as resn
 
 #############################################################
-def plotWorkingDiagram(order = 12,QxRange=np.array([0,1]),QyRange=np.array([0,1]),**kwargs):
+# WORKING DIAGRAM
 
-    # Initialization
-    options = {'color':'k','alpha':0.5}
+def _isPointInside(x,y,x_range,y_range,tol = 0):
+    x1,x2 = x_range
+    y1,y2 = y_range
+    tol   = np.abs(tol)
+    return (x1-tol <= x <= x2+tol) and (y1-tol <= y <= y2+tol)
+
+def _isLineInside(a,b,x_range,y_range,tol = 0):
+    '''Assumes y = ax+b and finds if line goes inside the ROI'''
+    x1,x2 = np.sort(x_range)
+    y1,y2 = np.sort(y_range)
+    tol   = np.abs(tol)
+
+    xi1   = (y1-b)/a if a!=0 else 0
+    xi2   = (y2-b)/a if a!=0 else 0
+
+    yi1   = a*x1 + b
+    yi2   = a*x2 + b
+
+    return ((x1-tol <= xi1 <= x2+tol) or 
+            (x1-tol <= xi2 <= x2+tol) or 
+            (y1-tol <= yi1 <= y2+tol) or 
+            (y1-tol <= yi2 <= y2+tol))
+
+def _plot_resonance_lines(df,Qx_range,Qy_range,ROI_tol = 1e-3,**kwargs):
+    ''' Plots all resonance lines contained in a dataframe, provided by BBStudies.Physics.Resonances.resonance_df
+        -> Filters out the lines that do not enter the ROI defined by Qx_range,Qy_range'''
+
+    options = {'color':'k','alpha':0.15}
     options.update(kwargs)
-    QxRange,QyRange = np.array(QxRange),np.array(QyRange)
-    def intList(n): return np.arange(-n,n+1)
-    plt.axis('square')
-    plt.xlim(QxRange)
-    plt.ylim(QyRange)
+
+    if 'label' in options.keys():
+        _label = options.pop('label')
+        plt.plot([np.nan],[np.nan],label = _label,**options)
+
+    for _,line in df.iterrows():
+        
+        # Non-vertical lines
+        if line['slope'] != np.inf:
+            # Skip if line not in ROI
+            if not _isLineInside(line['slope'],line['y0'],Qx_range,Qy_range,tol = ROI_tol):
+                continue
+
+            xVec = np.array(Qx_range)
+            yVec = line['slope']*xVec + line['y0']
+
+        # Vertical line
+        else:
+            # Skip if line not in ROI
+            if not (Qx_range[0] <= line['x0'] <=Qx_range[1]):
+                continue
+
+            xVec = line['x0']*np.ones(2)
+            yVec = np.array(Qy_range)
+
+        # Plotting if in ROI
+        plt.plot(xVec,yVec,**options)
 
 
-    # Creating all combinations except vertical lines
-    popt = []
-    for m1,m2,n in itertools.product(intList(order),intList(order)[intList(order)!=0],intList(200)):
-        if np.abs(m1)+np.abs(m2) <= order:
-            popt.append((-m1/m2,n/m2))
 
 
-    # Removing Duplicates
-    # TODO: change this line in order to keep track of the order of the resonance
-    popt = list(set(popt))
 
-    # Keeping only lines in ROI
-    ROI_popt = []
-    for slope,y0 in popt:
-        line = slope*QxRange + y0
+def workingDiagram(Qx_range = [0,1],Qy_range = [0,1],order=6,**kwargs):
+    
+    if not isinstance(order, (list, type(np.array([])))):
+        # Regular, full working diagram
+        resonances = resn.resonance_df(order)
+        _plot_resonance_lines(resonances,Qx_range,Qy_range,ROI_tol = 1e-3,**kwargs)
+    else:
+        # Selected resonances
+        resonances = resn.resonance_df(np.max(order))
+        for _ord in order:
+            _plot_resonance_lines(resonances[resonances['Order']==_ord],Qx_range,Qy_range,ROI_tol = 1e-3,**kwargs)
 
-        if np.any(np.logical_and(line>=np.min(QyRange),line<=np.max(QyRange))):
-            ROI_popt.append((slope,y0))
+        
 
-    # Plotting
-    regularSlopes = np.array(ROI_popt)[:,0]
-    for slope,y0 in ROI_popt:
-        plt.plot(QxRange,slope*QxRange + y0,**options)
 
-        # Reflection around y=x to take care of the cases where m2=0
-        with np.errstate(divide='ignore'):
-            invertedSlope = (np.diff(QyRange)/np.diff(slope*QyRange + y0))[0]
-        if not np.round(invertedSlope,5) in list(np.round(regularSlopes,5)):
-            plt.plot(slope*QyRange + y0,QyRange,**options)
+   
 
+
+    
+   
+
+
+def xticks_from_farey(order,*args,**kwargs):
+    plt.xticks([m/k for m,k in resn.Farey(order)],[f'{m:d}/{k:d}' for m,k in resn.Farey(order)],*args,**kwargs)
+
+
+def yticks_from_farey(order,*args,**kwargs):
+    plt.yticks([m/k for m,k in resn.Farey(order)],[f'{m:d}/{k:d}' for m,k in resn.Farey(order)],*args,**kwargs)
 #############################################################
 
 
