@@ -25,7 +25,7 @@ def vecNorm(vec):
 
 
 ##############################################################
-def normCoordinates(x,px,alpha=None,beta=None,SVD=False):
+def phys2norm(x,px,alpha=None,beta=None,SVD=False):
     
     if SVD:
         alpha,beta = SVD_AlphaBeta(x,px)
@@ -35,6 +35,14 @@ def normCoordinates(x,px,alpha=None,beta=None,SVD=False):
     px_n = alpha*x/np.sqrt(beta) + px*np.sqrt(beta)
     
     return x_n,px_n
+
+def norm2phys(x_n,px_n,alpha=None,beta=None):
+    
+    
+    x    = x_n*np.sqrt(beta)
+    px   = -alpha*x_n/np.sqrt(beta) + px_n/np.sqrt(beta)
+    
+    return x, px
 ##############################################################
 
 
@@ -66,7 +74,7 @@ def SVD_AlphaBeta(x,px):
 def getAction(x,px,alpha=None,beta=None,SVD=False):
     
     if SVD:
-        alpha,beta = computeAlphaBeta(x,px)
+        alpha,beta = SVD_AlphaBeta(x,px)
     gamma = (1+alpha**2)/beta
     
     J = (gamma*x**2  + 2*alpha*x*px + beta*px**2)/2
@@ -104,17 +112,20 @@ def generate_coordGrid(xRange,yRange,labels = ['x','y'],nPoints=100):
 
 
 ##############################################################
-def polar_grid(r_n,theta_n,emitt = None):
-    _coord  = generate_coordGrid(r_n,theta_n,labels = ['r_n','theta_n'])
+def polar_grid(r_sig,theta_sig,emitt = None):
+    _coord  = generate_coordGrid(r_sig,theta_sig,labels = ['r_sig','theta_sig'])
 
-    _coord.insert(2,'x_n',_coord['r_n']*np.cos(_coord['theta_n']))
-    _coord.insert(3,'y_n',_coord['r_n']*np.sin(_coord['theta_n']))
+    _coord.insert(2,'x_sig',_coord['r_sig']*np.cos(_coord['theta_sig']))
+    _coord.insert(3,'y_sig',_coord['r_sig']*np.sin(_coord['theta_sig']))
 
     if emitt is not None:
         if isinstance(emitt, (int, float)):
             emitt = [emitt,emitt]
-        _coord.insert(4,'J_x',(_coord['x_n']**2)*emitt[0]/2)
-        _coord.insert(5,'J_y',(_coord['y_n']**2)*emitt[1]/2)
+
+        _coord.insert(4,'x_n',_coord['x_sig']*np.sqrt(emitt[0]))
+        _coord.insert(5,'y_n',_coord['y_sig']*np.sqrt(emitt[1]))
+        _coord.insert(6,'J_x',(_coord['x_sig']**2)*emitt[0]/2)
+        _coord.insert(7,'J_y',(_coord['y_sig']**2)*emitt[1]/2)
 
     return _coord
 ##############################################################

@@ -3,13 +3,16 @@ import json
 import rich
 import re
 import numpy as np
-
+import pandas as pd
+from rich.progress import Progress, BarColumn, TextColumn,TimeElapsedColumn,SpinnerColumn,TimeRemainingColumn
 
 import xobjects as xo
 import xtrack as xt
 import xpart as xp
 
 from xdeps.refs import ARef
+
+import BBStudies.Analysis.Footprint as footp
 
 
 
@@ -128,3 +131,131 @@ def filter_twiss(_twiss,entries = ['drift','..']):
 
     return _twiss
 #====================================
+
+
+
+# Tracking class:
+#===================================================
+class Tracking():
+    
+    def __init__(self,tracker,particles,n_turns,progress=False,saveVars = False):
+        
+        self.particles = particles.copy()
+        self.n_turns   = int(n_turns)
+        self.vars      = None
+
+        # Footprint info
+        self._tunes    = None
+        self._tunesMTD    = 'pynaff'
+        self._oldTunesMTD = 'pynaff'
+
+        # Savevars if needed
+        if saveVars:
+            self.vars = tracker.vars.copy()
+
+        # Progress info
+        self.progress  = progress
+        self._plive    = None
+        self._pstatus  = None
+        
+        # Tracking
+        self.monitor   = None
+        self.df        = None
+        try:
+            self.runTracking(tracker)
+        except KeyboardInterrupt:
+            self.closeLiveDisplay()
+
+        # Disabling Tracking
+        self.runTracking = lambda _: print('New Tracking instance needed')
+    
+
+
+    @property
+    def tunes(self):
+        # Reset if method is changed
+        if self._tunesMTD != self._oldTunesMTD:
+            self._tunes = None
+
+        if self._tunes is None:
+            if self._tunesMTD == 'pynaff':
+                self._oldTunesMTD = 'pynaff'
+                self._tunes    = self.df.groupby('particle').apply(lambda _part: pd.Series({'Qx':footp.NAFF_tune(_part['x']),'Qy':footp.NAFF_tune(_part['y'])}))
+            if self._tunesMTD == 'fft':
+                self._oldTunesMTD = 'fft'
+                self._tunes    = self.df.groupby('particle').apply(lambda _part: pd.Series({'Qx':footp.FFT_tune(_part['x']),'Qy':footp.FFT_tune(_part['y'])}))
+
+        return self._tunes
+
+
+    def runTracking(self,tracker):
+        if self.progress:
+            # Create monitor if needed
+            if self.monitor is None:
+                self.monitor = xt.ParticlesMonitor( start_at_turn    = 0, 
+                                                    stop_at_turn     = self.n_turns,
+                                                    n_repetitions    = 1,
+                                                    repetition_period= 1,
+                                                    num_particles    = len(self.particles.particle_id))
+
+            # Run turn-by-turn to show progress
+            self.startProgressBar()
+            #-------------------------
+            for iturn in range(self.n_turns):
+                self.monitor.track(self.particles)
+                tracker.track(self.particles)
+                self.updateProgressBar()
+            #-------------------------
+            self.closeLiveDisplay()
+
+            #CONVERT TO PANDAS
+            self.df = pd.DataFrame(self.monitor.to_dict()['data'])
+
+        else:
+            self.startSpinner()
+            tracker.track(self.particles, num_turns=self.n_turns,turn_by_turn_monitor=True)
+            self.closeLiveDisplay()
+
+            #CONVERT TO PANDAS
+            self.df = pd.DataFrame(tracker.record_last_track.to_dict()['data'])
+        
+        # Filter the data
+        self.df = self.df[['at_turn','particle_id','x','px','y','py','zeta','delta','state']]
+        self.df.rename(columns={"at_turn": "turn",'particle_id':'particle'},inplace=True)
+
+    # Progress bar methods
+    #=============================================================================
+    def startProgressBar(self,):
+        self._plive = Progress("{task.description}",
+                                TextColumn("[progress.remaining] ["),TimeRemainingColumn(),TextColumn("[progress.remaining]remaining ]   "),
+                                SpinnerColumn(),
+                                BarColumn(bar_width=40),
+                                TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+                                TimeElapsedColumn())
+
+        self._plive.start()
+        self._plive.live._disable_redirect_io()
+
+        self._pstatus = self._plive.add_task("[blue]Tracking\n", total=self.n_turns)
+    
+    def updateProgressBar(self,):
+        self._plive.update(self._pstatus, advance=1,update=True)
+
+        
+    def startSpinner(self,):
+        self._plive = Progress("{task.description}",
+                                SpinnerColumn(),
+                                TextColumn("[progress.elapsed] ["),TimeElapsedColumn (),TextColumn("[progress.elapsed]elapsed ]   "))
+
+        self._plive.start()
+        self._plive.live._disable_redirect_io()
+
+        self._pstatus = self._plive.add_task("[blue]Tracking", total=self.n_turns)
+
+
+    def closeLiveDisplay(self,):
+        self._plive.refresh()
+        self._plive.stop()
+        self._plive.console.clear_live()
+
+#===================================================

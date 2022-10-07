@@ -25,6 +25,7 @@ pip install ipympl
 pip install ruamel.yaml
 pip install rich
 pip install lfm
+pip install pynaff
 
 # Adding the jupyter kernel to the list of kernels
 python -m ipykernel install --user --name py_BB --display-name "py_BB"
