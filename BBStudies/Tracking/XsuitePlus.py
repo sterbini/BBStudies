@@ -133,6 +133,37 @@ def filter_twiss(_twiss,entries = ['drift','..']):
 #====================================
 
 
+#====================================
+def W_phys2norm(x,px,y,py,zeta,pzeta,twiss,to_pd = False):
+     
+
+    # Compute ptau from delta
+    #=======================================
+    #beta0 = twiss.particle_on_co.beta0
+    #delta_beta0 = delta * beta0
+    #ptau_beta0 = (delta_beta0 * delta_beta0 + 2. * delta_beta0 * beta0 + 1.)**0.5 - 1.
+    #ptau  = ptau_beta0 / beta0
+    #pzeta = ptau / beta0
+    #=======================================
+
+    XX = np.zeros(shape=(6, len(x)), dtype=np.float64)
+    XX[0,:] = x     -twiss.particle_on_co.x
+    XX[1,:] = px    -twiss.particle_on_co.px
+    XX[2,:] = y     -twiss.particle_on_co.y
+    XX[3,:] = py    -twiss.particle_on_co.py
+    XX[4,:] = zeta  -twiss.particle_on_co.zeta
+    XX[5,:] = pzeta -twiss.particle_on_co.ptau / twiss.particle_on_co.beta0
+
+    XX_n = np.dot(np.linalg.inv(twiss.W_matrix[0]), XX)
+
+
+
+    if to_pd:
+        return pd.DataFrame({'x_n':XX_n[0,:],'px_n':XX_n[1,:],'y_n':XX_n[2,:],'py_n':XX_n[3,:],'zeta_n':XX_n[4,:],'pzeta_n':XX_n[5,:]})
+    else:
+        return XX_n
+#=======================================
+
 
 # Tracking class:
 #===================================================
@@ -220,8 +251,13 @@ class Tracking():
             self.df = pd.DataFrame(tracker.record_last_track.to_dict()['data'])
         
         # Filter the data
-        self.df = self.df[['at_turn','particle_id','x','px','y','py','zeta','delta','state']]
+        self.df.insert(list(self.df.columns).index('zeta'),'pzeta',self.df['ptau']/self.df['beta0'])
+        self.df = self.df[['at_turn','particle_id','x','px','y','py','zeta','pzeta','state']]
         self.df.rename(columns={"at_turn": "turn",'particle_id':'particle'},inplace=True)
+
+        # Return in normalized space as well:
+        coord_n = W_phys2norm(**self.df[['x','px','y','py','zeta','pzeta']],twiss=tracker.twiss(),to_pd=True)]
+        self.df = pd.concat([self.df,coord_n,axis=1)
 
     # Progress bar methods
     #=============================================================================

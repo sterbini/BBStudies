@@ -130,7 +130,7 @@ def polarmesh(x,y,r,theta,*args,**kwargs):
 
 
 #############################################################
-def FFT(x,*args,flipped=False,**kwargs):
+def FFT(x,*args,flipped=False,unpack=False,**kwargs):
     x     = np.array(x)
     turns = np.arange(1,len(x)+1)
     freq  = np.fft.fftfreq(turns.shape[-1])
@@ -142,4 +142,7 @@ def FFT(x,*args,flipped=False,**kwargs):
         plt.plot(freq[freq>0],-np.abs(spectrum)[freq>0],*args,**kwargs)
     else:
         plt.plot(freq[freq>0],np.abs(spectrum)[freq>0],*args,**kwargs)
+
+    if unpack:
+        return freq[freq>0],np.abs(spectrum)[freq>0]
 #############################################################
