@@ -2,11 +2,15 @@
 
 import matplotlib.pyplot as plt
 from matplotlib.colors import BoundaryNorm
+import matplotlib.animation as mplAnim
+
 import pandas as pd
 import scipy.special as sciSpec
 import numpy as np
 import itertools
 from fractions import Fraction
+import os
+import glob
 
 import BBStudies.Physics.Resonances as resn
 
@@ -36,7 +40,7 @@ def _isLineInside(a,b,x_range,y_range,tol = 0):
             (y1-tol <= yi1 <= y2+tol) or 
             (y1-tol <= yi2 <= y2+tol))
 
-def _plot_resonance_lines(df,Qx_range,Qy_range,ROI_tol = 1e-3,**kwargs):
+def _plot_resonance_lines(df,Qx_range,Qy_range,ROI_tol = 1e-3,offset=[0,0],**kwargs):
     ''' Plots all resonance lines contained in a dataframe, provided by BBStudies.Physics.Resonances.resonance_df
         -> Filters out the lines that do not enter the ROI defined by Qx_range,Qy_range'''
 
@@ -68,23 +72,23 @@ def _plot_resonance_lines(df,Qx_range,Qy_range,ROI_tol = 1e-3,**kwargs):
             yVec = np.array(Qy_range)
 
         # Plotting if in ROI
-        plt.plot(xVec,yVec,**options)
+        plt.plot(xVec+offset[0],yVec+offset[1],**options)
 
 
 
 
 
-def workingDiagram(Qx_range = [0,1],Qy_range = [0,1],order=6,**kwargs):
+def workingDiagram(Qx_range = [0,1],Qy_range = [0,1],order=6,offset=[0,0],**kwargs):
     
     if not isinstance(order, (list, type(np.array([])))):
         # Regular, full working diagram
         resonances = resn.resonance_df(order)
-        _plot_resonance_lines(resonances,Qx_range,Qy_range,ROI_tol = 1e-3,**kwargs)
+        _plot_resonance_lines(resonances,Qx_range,Qy_range,ROI_tol = 1e-3,offset=offset,**kwargs)
     else:
         # Selected resonances
         resonances = resn.resonance_df(np.max(order))
         for _ord in order:
-            _plot_resonance_lines(resonances[resonances['Order']==_ord],Qx_range,Qy_range,ROI_tol = 1e-3,**kwargs)
+            _plot_resonance_lines(resonances[resonances['Order']==_ord],Qx_range,Qy_range,ROI_tol = 1e-3,offset=offset,**kwargs)
 
         
 
@@ -146,3 +150,85 @@ def FFT(x,*args,flipped=False,unpack=False,**kwargs):
     if unpack:
         return freq[freq>0],np.abs(spectrum)[freq>0]
 #############################################################
+
+
+#############################################################
+
+
+class GIF():
+    def __init__(self,filename,tmp_folder = 'tmp_gifmaker',fps=5,dpi=300,max_frames=1000):
+        self.filename    = filename
+        self._giffolder  = tmp_folder
+        self._fcounter   = 0 
+        self.max_frames  = max_frames
+        self.ispublished = False
+
+        self.dpi   = dpi
+        self.fps   = fps
+        self.zfill = int(np.log10(max_frames))
+
+        # Clearing existing folder
+        if self.is_started:
+            self.clear()
+
+    def add_frame(self,):
+        if self.ispublished:
+            return None
+
+        if not self.is_started:
+            self.start()
+
+        if self._fcounter > self.max_frames:
+            print('Maximum number of frames reached')
+            self.publish()
+
+        plt.savefig(self.framefile,format='png',dpi=self.dpi)
+        self._fcounter += 1
+
+        # Return 1 as status
+        #return 1
+        
+
+    def publish(self,keepframes=False):
+        if self.ispublished:
+            return None
+        self.ispublished = True
+        
+        n_frames = self._fcounter
+        
+        fig, ax = plt.subplots()
+        fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=None, hspace=None)
+        ax.axis('off')
+        # Iterating over frames
+        #=============================
+        self._fcounter = 0
+        frame_list = []
+        for _frame in range(n_frames):
+            im = ax.imshow(plt.imread(self.framefile), animated = True)
+            frame_list.append([im])
+            self._fcounter += 1
+        #=============================
+
+        gif = mplAnim.ArtistAnimation(fig, frame_list)
+        gif.save(self.filename, fps=self.fps,dpi=self.dpi)
+        
+        plt.close()
+        if not keepframes:
+            self.clear()
+
+    @property
+    def framefile(self,):
+        return f'{self._giffolder}/gif_frame_{str(self._fcounter).zfill(self.zfill)}.png'
+
+    @property
+    def is_started(self,):
+        return os.path.exists(self._giffolder)
+
+    def start(self,):
+        os.mkdir(self._giffolder)
+
+    def clear(self,):
+        for f in glob.glob(f'{self._giffolder}/*'):
+            os.remove(f)
+        os.rmdir(self._giffolder)
+#################################################################################

@@ -8,12 +8,13 @@ Created on Wed March 1 11:50:29 2021
 
 import numpy as np
 import pandas as pd
-import PyNAFF as pnf
+import PyNAFF
+import NAFFlib
 
      
 
 
-def NAFF_tune(x,nterms=1,skipTurns=0):
+def PyNAFF_tune(x,nterms=1,skipTurns=0):
     '''
     Compute tunes of a particle using pyNAFF
     ----------------------------------------
@@ -25,13 +26,27 @@ def NAFF_tune(x,nterms=1,skipTurns=0):
         tunes: pd.Series containing the tune in both planes
     '''
     x      = np.array(x)
-    NAFF_x = pnf.naff(x-np.mean(x), turns=len(x), nterms=nterms , skipTurns=skipTurns, getFullSpectrum=False)
+    NAFF_x = PyNAFF.naff(x-np.mean(x), turns=len(x), nterms=nterms , skipTurns=skipTurns, getFullSpectrum=False)
 
     # TODO: allow more than 1 harmonic (nterms>1)
     # naff returns: [order of harmonic, frequency, Amplitude, Re{Amplitude}, Im{Amplitude] 
     _,Qx,_,Ax_Re,Ax_Im = NAFF_x[0]
 
     return Qx
+
+
+def NAFFlib_tune(x,nfreqs = 1,Hann_order=2):
+
+    x        = np.array(x)
+    Q,Ap,An  = NAFFlib.get_tunes(x-np.mean(x), nfreqs, Hann_order)
+
+    # np.abs(Ap[i]) is the amplitude
+    if nfreqs ==1:
+        return Q[0]
+    else:
+        return Q
+
+
 
 def FFT_tune(x):
     '''

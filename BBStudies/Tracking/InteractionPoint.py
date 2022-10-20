@@ -185,27 +185,29 @@ class Beam:
 def extract_IP_ROI(IP,beam,twiss,survey):
     
     # ROI from dipoles
-    ROI_twiss  =  twiss.loc[f'mb.a8l{IP[-1]}.{beam}_dex':f'mb.a8r{IP[-1]}.{beam}_den'].copy()
-    ROI_survey = survey.loc[f'mb.a8l{IP[-1]}.{beam}_dex':f'mb.a8r{IP[-1]}.{beam}_den'].copy()
+    ROI_twiss  =  twiss.loc[f'mb.a8l{IP[-1]}.{beam}':f'mb.a8r{IP[-1]}.{beam}'][2:-2].copy()
+    ROI_survey = survey.loc[f'mb.a8l{IP[-1]}.{beam}':f'mb.a8r{IP[-1]}.{beam}'][2:-2].copy()
+    # ROI_twiss  =  twiss.loc[f'mb.a8l{IP[-1]}.{beam}_dex':f'mb.a8r{IP[-1]}.{beam}_den'].copy()
+    # ROI_survey = survey.loc[f'mb.a8l{IP[-1]}.{beam}_dex':f'mb.a8r{IP[-1]}.{beam}_den'].copy()
     
 
     # Angle for rotation of survey
     angle = -ROI_survey.loc[IP,'theta']
     
     # Re-centering before rotating
-    z,x =  ROI_survey['z']-ROI_survey.loc[IP,'z'], ROI_survey['x']-ROI_survey.loc[IP,'x']
+    z,x =  ROI_survey['Z']-ROI_survey.loc[IP,'Z'], ROI_survey['X']-ROI_survey.loc[IP,'X']
     zz = z*np.cos(angle) - x*np.sin(angle)
     xx = z*np.sin(angle) + x*np.cos(angle)
     
     # Inserting in dataframe
-    ROI_survey.insert(1,'x_rot',xx)
-    ROI_survey.insert(2,'y_rot',ROI_survey['y'])
-    ROI_survey.insert(3,'z_rot',zz)
+    ROI_survey.insert(1,'X_rot',xx)
+    ROI_survey.insert(2,'Y_rot',ROI_survey['Y'])
+    ROI_survey.insert(3,'Z_rot',zz)
     ROI_survey.insert(4,'s_rot',ROI_survey['s']-ROI_survey.loc[IP,'s'])
     
     # Lab frame coordinates
-    ROI_twiss.insert(1,'x_lab',ROI_twiss['x'] + ROI_survey['x_rot'])
-    ROI_twiss.insert(2,'y_lab',ROI_twiss['y'] + ROI_survey['y_rot'])
+    ROI_twiss.insert(1,'x_lab',ROI_twiss['x'] + ROI_survey['X_rot'])
+    ROI_twiss.insert(2,'y_lab',ROI_twiss['y'] + ROI_survey['Y_rot'])
     ROI_twiss.insert(3,'s_lab',ROI_twiss['s'] - ROI_twiss.loc[IP,'s'])
     
     

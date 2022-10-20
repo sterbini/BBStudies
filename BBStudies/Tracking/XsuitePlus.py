@@ -5,6 +5,7 @@ import re
 import numpy as np
 import pandas as pd
 from rich.progress import Progress, BarColumn, TextColumn,TimeElapsedColumn,SpinnerColumn,TimeRemainingColumn
+import pickle
 
 import xobjects as xo
 import xtrack as xt
@@ -169,14 +170,15 @@ def W_phys2norm(x,px,y,py,zeta,pzeta,twiss,to_pd = False):
 #===================================================
 class Tracking():
     
-    def __init__(self,tracker,particles,n_turns,progress=False,saveVars = False):
+    def __init__(self,tracker,particles,n_turns,method='6D',progress=False,saveVars = False):
         
-        self.particles = particles.copy()
+        #self.particles = particles.copy()
         self.n_turns   = int(n_turns)
         self.vars      = None
 
         # Footprint info
         self._tunes    = None
+        self._tunes_n  = None
         self._tunesMTD    = 'pynaff'
         self._oldTunesMTD = 'pynaff'
 
@@ -192,34 +194,86 @@ class Tracking():
         # Tracking
         self.monitor   = None
         self.df        = None
+
+        assert (method.lower() in ['4d','6d']), 'method should either be 4D or 6D (default)'
         try:
-            self.runTracking(tracker)
+            self.runTracking(tracker,particles,method=method.lower())
         except KeyboardInterrupt:
             self.closeLiveDisplay()
+
 
         # Disabling Tracking
         self.runTracking = lambda _: print('New Tracking instance needed')
     
+    def to_pickle(self,filename):
+        # TODO: transfer .particles attribute to df to be pickled
+        self.particles    = None
+        self.progress     = None
+        self.monitor      = None
+        self.progress     = None
+        self._plive       = None
+        self._pstatus     = None
+        self.runTracking  = None
 
+        with open(filename, 'wb') as f:
+            pickle.dump(self, f)
 
     @property
     def tunes(self):
         # Reset if method is changed
         if self._tunesMTD != self._oldTunesMTD:
-            self._tunes = None
+            self._tunes   = None
+            self._tunes_n = None
 
         if self._tunes is None:
             if self._tunesMTD == 'pynaff':
                 self._oldTunesMTD = 'pynaff'
-                self._tunes    = self.df.groupby('particle').apply(lambda _part: pd.Series({'Qx':footp.NAFF_tune(_part['x']),'Qy':footp.NAFF_tune(_part['y'])}))
+                self._tunes    = self.df.groupby('particle').apply(lambda _part: pd.Series({'Qx':footp.PyNAFF_tune(_part['x']),'Qy':footp.PyNAFF_tune(_part['y'])}))
             if self._tunesMTD == 'fft':
                 self._oldTunesMTD = 'fft'
                 self._tunes    = self.df.groupby('particle').apply(lambda _part: pd.Series({'Qx':footp.FFT_tune(_part['x']),'Qy':footp.FFT_tune(_part['y'])}))
-
+            if self._tunesMTD == 'nafflib':
+                self._oldTunesMTD = 'nafflib'
+                self._tunes    = self.df.groupby('particle').apply(lambda _part: pd.Series({'Qx':footp.NAFFlib_tune(_part['x']),'Qy':footp.NAFFlib_tune(_part['y'])}))
+        
         return self._tunes
 
+    @property
+    def tunes_n(self):
+        # Reset if method is changed
+        if self._tunesMTD != self._oldTunesMTD:
+            self._tunes   = None
+            self._tunes_n = None
 
-    def runTracking(self,tracker):
+        if self._tunes_n is None:
+            if self._tunesMTD == 'pynaff':
+                self._oldTunesMTD = 'pynaff'
+                self._tunes_n    = self.df.groupby('particle').apply(lambda _part: pd.Series({'Qx':footp.PyNAFF_tune(_part['x_n']),'Qy':footp.PyNAFF_tune(_part['y_n'])}))
+            if self._tunesMTD == 'fft':
+                self._oldTunesMTD = 'fft'
+                self._tunes_n    = self.df.groupby('particle').apply(lambda _part: pd.Series({'Qx':footp.FFT_tune(_part['x_n']),'Qy':footp.FFT_tune(_part['y_n'])}))
+            if self._tunesMTD == 'nafflib':
+                self._oldTunesMTD = 'nafflib'
+                self._tunes_n    = self.df.groupby('particle').apply(lambda _part: pd.Series({'Qx':footp.NAFFlib_tune(_part['x_n']),'Qy':footp.NAFFlib_tune(_part['y_n'])}))
+        
+        return self._tunes_n
+
+
+    def runTracking(self,tracker,particles,method = '6d'):
+
+        if method=='4d':
+            freeze_vars = xp.particles.part_energy_varnames() + ['zeta']
+            tracker4D   = xt.Tracker(line=tracker.line,local_particle_src=xp.gen_local_particle_api(freeze_vars=freeze_vars))
+            _tracker    = tracker4D
+
+            # Some checks
+            assert tracker4D.line is tracker.line
+            assert tracker4D._buffer is tracker._buffer
+            assert np.all(tracker4D.ele_offsets_dev == tracker.ele_offsets_dev)
+            
+        else:
+            _tracker    = tracker
+
         if self.progress:
             # Create monitor if needed
             if self.monitor is None:
@@ -227,14 +281,14 @@ class Tracking():
                                                     stop_at_turn     = self.n_turns,
                                                     n_repetitions    = 1,
                                                     repetition_period= 1,
-                                                    num_particles    = len(self.particles.particle_id))
+                                                    num_particles    = len(particles.particle_id))
 
             # Run turn-by-turn to show progress
             self.startProgressBar()
             #-------------------------
             for iturn in range(self.n_turns):
-                self.monitor.track(self.particles)
-                tracker.track(self.particles)
+                self.monitor.track(particles)
+                _tracker.track(particles)
                 self.updateProgressBar()
             #-------------------------
             self.closeLiveDisplay()
@@ -244,11 +298,11 @@ class Tracking():
 
         else:
             self.startSpinner()
-            tracker.track(self.particles, num_turns=self.n_turns,turn_by_turn_monitor=True)
+            _tracker.track(particles, num_turns=self.n_turns,turn_by_turn_monitor=True)
             self.closeLiveDisplay()
 
             #CONVERT TO PANDAS
-            self.df = pd.DataFrame(tracker.record_last_track.to_dict()['data'])
+            self.df = pd.DataFrame(_tracker.record_last_track.to_dict()['data'])
         
         # Filter the data
         self.df.insert(list(self.df.columns).index('zeta'),'pzeta',self.df['ptau']/self.df['beta0'])
@@ -256,8 +310,9 @@ class Tracking():
         self.df.rename(columns={"at_turn": "turn",'particle_id':'particle'},inplace=True)
 
         # Return in normalized space as well:
-        coord_n = W_phys2norm(**self.df[['x','px','y','py','zeta','pzeta']],twiss=tracker.twiss(),to_pd=True)]
-        self.df = pd.concat([self.df,coord_n,axis=1)
+        # NOTE: twiss can only be done on tracker6D!!
+        coord_n = W_phys2norm(**self.df[['x','px','y','py','zeta','pzeta']],twiss=_tracker.twiss(method=method),to_pd=True)
+        self.df = pd.concat([self.df,coord_n],axis=1)
 
     # Progress bar methods
     #=============================================================================
