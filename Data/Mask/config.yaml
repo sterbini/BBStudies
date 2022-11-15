@@ -19,7 +19,7 @@ links:
 #     'b1_with_bb_legacy_macros
 #     'b4_without_bb'
 
-mode: None
+mode: 'b4_from_b2_with_bb'
 
 #=========================
 # Wire compensation

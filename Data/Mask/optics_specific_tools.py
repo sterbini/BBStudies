@@ -64,7 +64,7 @@ def build_sequence(mad, beam, configuration):
     # Installing wires in collimators
     if configuration['install_wires']:
         for my_sequence in ['lhcb1','lhcb2']:
-            bbcw.install_wires(mad,configuration,seq_name=my_sequence)
+            bbcw.install_wires(mad,mylhcbeam,configuration,seq_name=my_sequence)
         
         
 

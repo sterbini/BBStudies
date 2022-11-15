@@ -90,14 +90,6 @@ def workingDiagram(Qx_range = [0,1],Qy_range = [0,1],order=6,offset=[0,0],**kwar
         for _ord in order:
             _plot_resonance_lines(resonances[resonances['Order']==_ord],Qx_range,Qy_range,ROI_tol = 1e-3,offset=offset,**kwargs)
 
-        
-
-
-   
-
-
-    
-   
 
 
 def xticks_from_farey(order,*args,**kwargs):
@@ -232,3 +224,78 @@ class GIF():
             os.remove(f)
         os.rmdir(self._giffolder)
 #################################################################################
+
+
+#################################################################################
+from matplotlib.legend_handler import HandlerTuple
+
+class HandlerTupleVertical(HandlerTuple):
+    def __init__(self, **kwargs):
+        HandlerTuple.__init__(self, **kwargs)
+
+    def create_artists(self, legend, orig_handle,
+                       xdescent, ydescent, width, height, fontsize, trans):
+        # How many lines are there.
+        numlines = len(orig_handle)
+        handler_map = legend.get_legend_handler_map()
+
+        # divide the vertical space where the lines will go
+        # into equal parts based on the number of lines
+        height_y = (height / numlines)
+
+        leglines = []
+        for i, handle in enumerate(orig_handle):
+            handler = legend.get_legend_handler(handler_map, handle)
+
+            legline = handler.create_artists(legend, handle,
+                                             xdescent,
+                                             (2*i + 1)*height_y,
+                                             width,
+                                             2*height,
+                                             fontsize, trans)
+            leglines.extend(legline)
+
+        return leglines
+
+
+def add_multi_H_legend(handles,label,**kwargs):
+    _handles, _labels = plt.gca().get_legend_handles_labels()
+    plt.legend(_handles + [tuple(handles)], _labels + [label], handler_map = {tuple : HandlerTuple(len(handles))},**kwargs)
+def add_multi_V_legend(handles,label,**kwargs):
+    _handles, _labels = plt.gca().get_legend_handles_labels()
+    plt.legend(_handles + [tuple(handles)], _labels + [label], handler_map = {tuple : HandlerTupleVertical(len(handles))},**kwargs)
+
+#################################################################################
+
+
+
+##################################################################################
+def textbox(x,y,text,fontsize=12,axcoords=True,color='gray',alpha=0.1,verticalalignment='center',horizontalalignment='center'):
+    props = dict(boxstyle='round', facecolor=color, alpha=alpha)
+    if axcoords:
+        box = plt.text(x,y, text, transform=plt.gca().transAxes, fontsize=fontsize,verticalalignment=verticalalignment,horizontalalignment=horizontalalignment, bbox=props)
+    else:
+        box = plt.text(x,y, text,fontsize=fontsize,verticalalignment=verticalalignment,horizontalalignment=horizontalalignment, bbox=props)
+
+    window = box.get_window_extent()
+    return  window.x1- window.x0, window.y1- window.y0
+##################################################################################
+
+##################################################################################
+def register_click(fig,x_timestamp = False,y_timestamp = False,TZONE='Europe/Paris'):
+    import matplotlib.dates as mpldates
+
+    def onclick(event):
+        click_type = 'double' if event.dblclick else 'single'
+        x_info     = event.xdata
+        y_info     = event.ydata
+        if x_timestamp:
+            x_info = str(pd.Timestamp(mpldates.num2date(event.xdata)).tz_convert(TZONE))
+        if y_timestamp:
+            y_info = str(pd.Timestamp(mpldates.num2date(event.xdata)).tz_convert(TZONE))
+
+        print(f'{click_type} click \t|\t x : [{x_info}] \t|\t y : [{y_info}]')
+
+    cid = fig.canvas.mpl_connect('button_press_event', onclick)
+    return cid
+##################################################################################

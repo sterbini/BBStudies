@@ -2,7 +2,7 @@
   /**********************************************************************************
   *
   * LHC ring (draft) version YETS 2021-2022 in MAD X sequence format
-  * Generated the 28-JAN-2022 16:48:56 from LAYOUT
+  * Generated the 17-JUN-2022 18:42:11 from LAYOUT
   *
   ***********************************************************************************/
 
@@ -281,8 +281,7 @@ l.TCAPA019          := 1;
 l.TCAPA020          := 1;
 l.TCAPB             := 0.2;
 l.TCAPC             := 0.6;
-l.TCAPD             := 0.618;
-l.TCAPM             := 3.52;
+l.TCAPD             := 1;
 l.TCDD              := 1;
 l.TCDDM             := 1;
 l.TCDQA             := 0;
@@ -553,7 +552,6 @@ TCAPA020 : COLLIMATOR, L := l.TCAPA020;                                         
 TCAPB : COLLIMATOR, L := l.TCAPB;                                                                                                 ! Passive absorber with shielding length 0.2m
 TCAPC : COLLIMATOR, L := l.TCAPC;                                                                                                 ! Passive absorber with shielding length 0.6m - Type C
 TCAPD : COLLIMATOR, L := l.TCAPD;                                                                                                 ! Passive absorber with shielding length 0.6m - Type D
-TCAPM : COLLIMATOR, L := l.TCAPM;                                                                                                 ! Passive absorber with Mask with shielding lenght 2.0 m IP7 (Right)
 TCDD : COLLIMATOR, L := l.TCDD;                                                                                                   ! Collimator for D1 Protection (IR2)
 TCDDM : COLLIMATOR, L := l.TCDDM;                                                                                                 ! Mask for D1 Protection (IR8)
 TCDQA : COLLIMATOR, L := l.TCDQA;                                                                                                 ! Collimator Absorber block for Q4 Protection (IR6) Type A
@@ -770,7 +768,7 @@ MBW : RBEND, L := l.MBW, Kmax := Kmax_MBW, Kmin := Kmin_MBW, Calib := Kmax_MBW /
 MBX : RBEND, L := l.MBX, Kmax := Kmax_MBX, Kmin := Kmin_MBX, Calib := Kmax_MBX / Imax_MBX;                                        ! Single Aperture Separation Dipole. D1
 MBXW : RBEND, L := l.MBXW, Kmax := Kmax_MBXW, Kmin := Kmin_MBXW, Calib := Kmax_MBXW / Imax_MBXW;                                  ! Single Aperture Warm Dipole Module D1 in IR1 and IR5
 //---------------------- RFCAVITY       ---------------------------------------------
-ACSCA : RFCAVITY, L := l.ACSCA, HARMON := HRF400;                                                                                                   ! Superconducting Bare Cavity
+ACSCA : RFCAVITY, L := l.ACSCA, HARMON := HRF400;                                                                                 ! Superconducting Bare Cavity
 //---------------------- SBEND          ---------------------------------------------
 MB : SBEND, L := l.MB, Kmax := Kmax_MB, Kmin := Kmin_MB, Calib := Kmax_MB / Imax_MB;                                              ! Magnet coil for Main Dipole Coldmass
 //---------------------- SEXTUPOLE      ---------------------------------------------
@@ -1718,7 +1716,7 @@ MBX.4L8:MBX,               at= 63.108-(-154-IP8OFS.B2)*DS, mech_sep= 0, slot_id=
 BPMSX.4L8.B2:BPMSX003,     at= 69.3805-(-154-IP8OFS.B2)*DS, mech_sep= 0.0194, slot_id= 43190482, assembly_id= 104616,    from= IP8;
 TCLIA.4L8:TCLIA,           at= 73.748-(-154-IP8OFS.B2)*DS, mech_sep= 0, slot_id= 357150,                                 from= IP8;
 BRANC.4L8:BRANC,           at= 113.588-(-154-IP8OFS.B2)*DS, mech_sep= 0, slot_id= 55373986,                              from= IP8;
-BPMWB.4L8.B2:BPMWB,        at= 114.7925-(-154-IP8OFS.B2)*DS, mech_sep= 0.1590, slot_id= 104615, assembly_id= 51650538,   from= IP8;
+BPMWB.4L8.B2:BPMWB,        at= 114.7925-(-154-IP8OFS.B2)*DS, mech_sep= 0.1611, slot_id= 104615, assembly_id= 51650538,   from= IP8;
 TANB.A4L8.B2:TANB,         at= 119.4855-(-154-IP8OFS.B2)*DS, mech_sep= 0.1740, slot_id= 52999655, assembly_id= 51650555, from= IP8;
 MBRC.4L8.B2:MBRC,          at= 126.403-(-154-IP8OFS.B2)*DS, mech_sep= 0.1880, slot_id= 52819740, assembly_id= 103754,    from= IP8;
 MCBYH.A4L8.B2:MCBYH,       at= 132.95-(-154-IP8OFS.B2)*DS, mech_sep= 0.1940, slot_id= 253182, assembly_id= 103753,       from= IP8;
@@ -2508,7 +2506,6 @@ TCSG.A6R7.B2:TCSG,         at= -161.4835-(0-IP7OFS.B2)*DS, mech_sep= 0.2240, slo
 TCPCV.A6R7.B2:TCPCV,       at= -150.5385-(0-IP7OFS.B2)*DS, mech_sep= 0.2240, slot_id= 40086475,                          from= IP7;
 TCAPC.6R7.B2:TCAPC,        at= -145.161-(0-IP7OFS.B2)*DS, mech_sep= 0.2240, slot_id= 820155,                             from= IP7;
 BPMWE.5R7.B2:BPMWE007,     at= -144.4565-(0-IP7OFS.B2)*DS, mech_sep= 0.2240, slot_id= 134751,                            from= IP7;
-TCAPM.A5R7.B2:TCAPM,       at= -142.316-(0-IP7OFS.B2)*DS, mech_sep= 0.2240, slot_id= 53020562, assembly_id= 51085508,    from= IP7;
 MQWA.D5R7.B2:MQWA,         at= -138.566-(0-IP7OFS.B2)*DS, mech_sep= 0.2240, slot_id= 241738,                             from= IP7;
 MQWA.C5R7.B2:MQWA,         at= -134.766-(0-IP7OFS.B2)*DS, mech_sep= 0.2240, slot_id= 241737,                             from= IP7;
 MQWA.F5R7.B2:MQWA,         at= -130.966-(0-IP7OFS.B2)*DS, mech_sep= 0.2240, slot_id= 52778518,                           from= IP7;
@@ -4140,13 +4137,13 @@ MCBYV.4R5.B2:MCBYV,        at= -165.735-(308-IP5OFS.B2)*DS, mech_sep= 0.1940, sl
 MCBYH.A4R5.B2:MCBYH,       at= -164.439-(308-IP5OFS.B2)*DS, mech_sep= 0.1940, slot_id= 251617, assembly_id= 103057,      from= IP5;
 MBRC.4R5.B2:MBRC,          at= -157.9-(308-IP5OFS.B2)*DS, mech_sep= 0.1880, slot_id= 52819717, assembly_id= 103056,      from= IP5;
 BPMWB.4R5.B2:BPMWB,        at= -151.1705-(308-IP5OFS.B2)*DS, mech_sep= 0.1780, slot_id= 104613,                          from= IP5;
-BBCWI.4R5.U.B2:BBCWI,      at= -148.59-(308-IP5OFS.B2)*DS, mech_sep= 0.1700, slot_id= 39829972, assembly_id= 54812586,   from= IP5;
 BPTUH.A4R5.B2:BPTUH,       at= -148.54-(308-IP5OFS.B2)*DS, mech_sep= 0.1694, slot_id= 10402852, assembly_id= 54812586,   from= IP5;
-BBCWI.4R5.D.B2:BBCWI,      at= -148.54-(308-IP5OFS.B2)*DS, mech_sep= 0.1700, slot_id= 39833747, assembly_id= 54812586,   from= IP5;
-BBCWE.4R5.U.B2:BBCWE,      at= -148.54-(308-IP5OFS.B2)*DS, mech_sep= 0.1700, slot_id= 39833745, assembly_id= 54812586,   from= IP5;
+BBCWI.4R5.U.B2:BBCWI,      at= -148.54-(308-IP5OFS.B2)*DS, mech_sep= 0.2520, slot_id= 39833747, assembly_id= 54812586,   from= IP5;
+BBCWE.4R5.U.B2:BBCWE,      at= -148.54-(308-IP5OFS.B2)*DS, mech_sep= 0.0920, slot_id= 39829970, assembly_id= 54812586,   from= IP5;
 TCTPH.4R5.B2:TCTWH,        at= -147.945-(308-IP5OFS.B2)*DS, mech_sep= 0.1716, slot_id= 54812586,                         from= IP5;
 BPTDH.A4R5.B2:BPTDH,       at= -147.35-(308-IP5OFS.B2)*DS, mech_sep= 0.1668, slot_id= 10402850, assembly_id= 54812586,   from= IP5;
-BBCWE.4R5.D.B2:BBCWE,      at= -147.35-(308-IP5OFS.B2)*DS, mech_sep= 0.1700, slot_id= 39829970, assembly_id= 54812586,   from= IP5;
+BBCWI.4R5.D.B2:BBCWI,      at= -147.35-(308-IP5OFS.B2)*DS, mech_sep= 0.2480, slot_id= 39829972, assembly_id= 54812586,   from= IP5;
+BBCWE.4R5.D.B2:BBCWE,      at= -147.35-(308-IP5OFS.B2)*DS, mech_sep= 0.0880, slot_id= 39833745, assembly_id= 54812586,   from= IP5;
 BPTUV.A4R5.B2:BPTUV,       at= -146.54-(308-IP5OFS.B2)*DS, mech_sep= 0.1660, slot_id= 10402718, assembly_id= 377617,     from= IP5;
 TCTPV.4R5.B2:TCTPV,        at= -145.945-(308-IP5OFS.B2)*DS, mech_sep= 0.1669, slot_id= 377617,                           from= IP5;
 BPTDV.A4R5.B2:BPTDV,       at= -145.35-(308-IP5OFS.B2)*DS, mech_sep= 0.1620, slot_id= 10402727, assembly_id= 377617,     from= IP5;
@@ -4224,7 +4221,7 @@ MBXW.F4L5:MBXW,            at= 82.652-(308-IP5OFS.B2)*DS, mech_sep= 0, slot_id= 
 X5FCA.B4L5:X5FCA,          at= 85.08-(308-IP5OFS.B2)*DS, mech_sep= 0, slot_id= 5593908,                                  from= IP5;
 X5FCB.A4L5:X5FCB,          at= 114.13-(308-IP5OFS.B2)*DS, mech_sep= 0, slot_id= 5593911,                                 from= IP5;
 X5ZDC.A4L5:X5ZDC002,       at= 141.0725-(308-IP5OFS.B2)*DS, mech_sep= 0, slot_id= 2019602, assembly_id= 103042,          from= IP5;
-BRAND.4L5:BRAND,           at= 141.085-(308-IP5OFS.B2)*DS, mech_sep= 0, slot_id= 55374093, assembly_id= 103042,          from= IP5;
+BRAND.4L5:BRAND,           at= 141.185-(308-IP5OFS.B2)*DS, mech_sep= 0, slot_id= 55374093, assembly_id= 103042,          from= IP5;
 X5ZDC.B4L5:X5ZDC001,       at= 141.6225-(308-IP5OFS.B2)*DS, mech_sep= 0, slot_id= 2019606, assembly_id= 103042,          from= IP5;
 TANC.4L5:TANC,             at= 142.754-(308-IP5OFS.B2)*DS, mech_sep= 0, slot_id= 103042,                                 from= IP5;
 TCL.4L5.B2:TCL,            at= 150.03-(308-IP5OFS.B2)*DS, mech_sep= -0.1763, slot_id= 52659116,                          from= IP5;
