@@ -2,8 +2,18 @@
 
 # installing conda
 mkdir ./Executables
-wget -P ./Executables https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh 
-bash ./Executables/Miniconda3-latest-Linux-x86_64.sh -b  -p ./Executables/miniconda -f
+if [ "$(uname)" == "Darwin" ]; then
+    # Do something under Mac OS X platform
+    if [ "$(uname -m)" == "x86_64" ]; then
+        wget -O ./Executables/Miniconda3-latest.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
+    elif [ "$(uname -m)" == "arm64" ]; then
+        wget -O ./Executables/Miniconda3-latest.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh
+    fi
+elif [ "$(uname)" == "Linux" ]; then
+    # Do something under Linux platform
+    wget -O ./Executables/Miniconda3-latest.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+fi
+bash ./Executables/Miniconda3-latest.sh -b  -p ./Executables/miniconda -f
 
 
 # create your own virtual environment in a new folder
