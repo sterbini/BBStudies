@@ -299,3 +299,23 @@ def register_click(fig,x_timestamp = False,y_timestamp = False,TZONE='Europe/Par
     cid = fig.canvas.mpl_connect('button_press_event', onclick)
     return cid
 ##################################################################################
+
+
+###############################################################################
+from matplotlib.colors import BoundaryNorm
+from matplotlib.patches import FancyArrowPatch
+def drawArrow(x,y,scale=2,rotate=0,facecolor = None,color='C0',alpha=1,label = None,zorder=None):
+    ax = plt.gca()
+    ax.plot(x[:-2], y[:-2], color=color,alpha=alpha,label=label)
+    posA, posB = zip(x[-2:], y[-2:])
+    edge_width = 2.*scale
+    anglestyle = "arc3,rad={}".format(np.radians(rotate))
+    #arrowstyle was 3*edge_width,3*edge_width,edge_width before.
+    arrowstyle = "fancy,head_length={},head_width={},tail_width={}".format(3*edge_width, 2*edge_width, 2*edge_width)
+
+    if facecolor is None:
+        arrow = FancyArrowPatch(posA=posA, posB=posB, arrowstyle=arrowstyle, connectionstyle=anglestyle,color=color,alpha=alpha,zorder=zorder)
+    else:
+        arrow = FancyArrowPatch(posA=posA, posB=posB, arrowstyle=arrowstyle, connectionstyle=anglestyle,facecolor=facecolor,edgecolor=color,alpha=alpha,zorder=zorder)
+    ax.add_artist(arrow)
+#################################################################################

@@ -133,6 +133,26 @@ def BBLR_octupole(Jx,Jy,betx,bety,k1,k3):
     return DQx,DQy
 
 
+def DQx_DQy_octupole(ax,ay,betxy,emittxy,k1l,k3l):
+    """ ax,ay       -> normalized amplitude, ax = x/sigma_weak
+        betx,bety   -> bet of the weak beam
+        k1l         -> integrated k1 component
+        k3l         -> integrated k3 component"""
+    
+    betx,bety     = betxy
+    emittx,emitty = emittxy
+    Jx,Jy         = (ax**2)*emittx/2, (ay**2)*emitty/2
+
+    # Quadrupole contribution
+    DQx =  1/(4*np.pi)*k1l*betx
+    DQy = -1/(4*np.pi)*k1l*bety
+        
+    # Octupole contribution
+    DQx += 3/(8*np.pi)*(k3l/np.math.factorial(3))*(betx**2 * Jx - 2*betx*bety*Jy)
+    DQy += 3/(8*np.pi)*(k3l/np.math.factorial(3))*(bety**2 * Jy - 2*bety*betx*Jx)
+    
+    return DQx,DQy
+
 
 
 
