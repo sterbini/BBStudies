@@ -36,6 +36,7 @@ pip install ruamel.yaml
 pip install rich
 pip install lfm
 pip install pynaff
+pip install NAFFlib
 
 # Adding the jupyter kernel to the list of kernels
 python -m ipykernel install --user --name py_BB --display-name "py_BB"

@@ -262,17 +262,19 @@ class Tracking():
     def runTracking(self,tracker,particles,method = '6d'):
 
         if method=='4d':
-            freeze_vars = xp.particles.part_energy_varnames() + ['zeta']
-            tracker4D   = xt.Tracker(line=tracker.line,local_particle_src=xp.gen_local_particle_api(freeze_vars=freeze_vars))
-            _tracker    = tracker4D
+            config = xt.tracker.TrackerConfig()
+            config.update(tracker.config)
 
+            _tracker = tracker
+            _tracker.freeze_longitudinal(True)
+            
             # Some checks
-            assert tracker4D.line is tracker.line
-            assert tracker4D._buffer is tracker._buffer
-            assert np.all(tracker4D.ele_offsets_dev == tracker.ele_offsets_dev)
+            assert _tracker.line is tracker.line
+            assert _tracker._buffer is tracker._buffer
+            
             
         else:
-            _tracker    = tracker
+            _tracker = tracker
 
         if self.progress:
             # Create monitor if needed
@@ -313,6 +315,10 @@ class Tracking():
         # NOTE: twiss can only be done on tracker6D!!
         coord_n = W_phys2norm(**self.df[['x','px','y','py','zeta','pzeta']],twiss=_tracker.twiss(method=method),to_pd=True)
         self.df = pd.concat([self.df,coord_n],axis=1)
+
+        # Unfreeze longitudinal
+        if method=='4d':
+            tracker.config = config
 
     # Progress bar methods
     #=============================================================================
