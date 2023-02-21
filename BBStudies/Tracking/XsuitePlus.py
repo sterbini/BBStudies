@@ -299,9 +299,9 @@ class Tracking():
             self.df = pd.DataFrame(self.monitor.to_dict()['data'])
 
         else:
-            self.startSpinner()
+            # self.startSpinner()
             _tracker.track(particles, num_turns=self.n_turns,turn_by_turn_monitor=True)
-            self.closeLiveDisplay()
+            # self.closeLiveDisplay()
 
             #CONVERT TO PANDAS
             self.df = pd.DataFrame(_tracker.record_last_track.to_dict()['data'])
