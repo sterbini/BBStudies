@@ -18,8 +18,7 @@ import BBStudies.Physics.Constants as cst
 # %%
 import xtrack as xt
 
-my_json = ('/home/sterbini/2023_07_06_Q_FP/'
-           'BBStudies/BBStudies/Run3_configuration/'
+my_json = ('../BBStudies/Run3_configuration/'
            '2_configure_and_track/'
            'final_collider.json')
 collider = xt.Multiline.from_json(my_json)
