@@ -207,6 +207,7 @@ for my_index, bb in enumerate(name_weak):
     else:
         xi_list.append(xi)
 
+#  %%
 
 # Sum tuneshift for all head-on
 for my_index, bb in enumerate(name_weak):
@@ -259,3 +260,32 @@ for window in [0.01,0.05]:
 #====================================================
 
 # %%
+from multiprocessing import Pool
+
+def func(a, b):
+    return {'test':(a + b, a * b)}
+
+def myDQx_DQy(bb_name,  r,
+                dx_sig, 
+                dy_sig, 
+                A_w_s, 
+                B_w_s, 
+                xi ):
+    return {bb_name: (dtune.DQx_DQy(coordinates['x_sig'],
+                                    coordinates['y_sig'],
+                                r     , #= r[my_index],
+                                dx_sig, # = dx_sig[my_index],
+                                dy_sig, # = dy_sig[my_index],
+                                A_w_s , # = A_w_s[my_index],
+                                B_w_s , # = B_w_s[my_index],
+                                xi    ))}# = xi_list[my_index])
+
+myDQx_DQy(name_weak[0],r[0],dx_sig[0],dy_sig[0],A_w_s[0],B_w_s[0],xi_list[0])
+with Pool(64) as pool:
+    result = pool.starmap(myDQx_DQy, zip(name_weak, 
+                                        r, 
+                                        dx_sig, 
+                                        dy_sig, 
+                                        A_w_s, 
+                                        B_w_s, 
+                                        xi_list))
