@@ -67,4 +67,19 @@ pip install -e ./Executables/py_BB/xfields
 
 git clone https://github.com/PyCOMPLETE/FillingPatterns.git ./Executables/py_BB/FillingPatterns
 pip install -e ./Executables/py_BB/FillingPatterns
+
+git clone https://github.com/xsuite/tree_maker.git ./Executables/py_BB/tree_maker
+python -m pip install -e ./Executables/py_BB/tree_maker
+
+git clone https://github.com/xsuite/xmask.git ./Executables/py_BB/xmask
+python -m pip install -e ./Executables/py_BB/xmask
+
+cd ./Executables/py_BB/xmask
+git submodule init
+git submodule update
+cd ../../../
+
+python -m pip install xsuite
+xsuite-prebuild
+
 #=========================================
