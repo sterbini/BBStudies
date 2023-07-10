@@ -1,23 +1,15 @@
 # %%
 import numpy as np
-import pandas as pd
 import sys
-
-import xobjects as xo
 import xtrack as xt
-import xpart as xp
 
 sys.path.append('../')
-import BBStudies.Tracking.XsuitePlus as xPlus
-import BBStudies.Tracking.InteractionPoint as inp
 import BBStudies.Physics.Detuning as dtune
 import BBStudies.Physics.Base as phys
 import BBStudies.Plotting.BBPlots as bbplt
 import BBStudies.Physics.Constants as cst
 
 # %%
-import xtrack as xt
-
 my_json = ('../BBStudies/Run3_configuration/'
            '2_configure_and_track/'
            'final_collider.json')
@@ -32,7 +24,6 @@ survey = {}
 #collider.vars['vrf400'] = 12.0
 #collider.vars['lagrf400.b1'] = 0.5
 #collider.vars['lagrf400.b2'] = 0.0
-
 
 # Twiss and survey from xsuite line
 for seq in ['lhcb1','lhcb2']:
@@ -71,7 +62,6 @@ coordinates = phys.polar_grid(  r_sig     = np.linspace(1,6.5,3),
                                 theta_sig = np.linspace(0.05*np.pi/2,0.95*np.pi/2,3),
                                 emitt     = [2.5e-6/7000,2.5e-6/7000])
 
-display(coordinates)
 plt.figure()
 plt.plot(coordinates.x_sig,coordinates.y_sig,'o')
 plt.axis('square')
@@ -145,7 +135,7 @@ plt.plot(ax,ay,'o')
 plt.xlabel('ax [$\sigma$]')
 plt.ylabel('ay [$\sigma$]')
 plt.axis('square')
-# %%
+
 # %%
 
 plt.plot(s,np.abs(dx_sig),'o')
@@ -289,3 +279,5 @@ with Pool(64) as pool:
                                         A_w_s, 
                                         B_w_s, 
                                         xi_list))
+
+# %%
