@@ -56,8 +56,8 @@ import BBStudies.Physics.Constants as cst
 import BBStudies.Plotting.BBPlots as bbplt
 
 
-coordinates = phys.polar_grid(  r_sig     = np.linspace(1,6.5,3),
-                                theta_sig = np.linspace(0.05*np.pi/2,0.95*np.pi/2,3),
+coordinates = phys.polar_grid(  r_sig     = np.linspace(1,6.5,5),
+                                theta_sig = np.linspace(0.05*np.pi/2,0.95*np.pi/2,5),
                                 emitt     = [2.5e-6/7000,2.5e-6/7000])
 
 
@@ -65,8 +65,8 @@ coordinates = phys.polar_grid(  r_sig     = np.linspace(1,6.5,3),
 twiss_filtered = {}
 survey_filtered = {}
 
-#my_filter_string = 'bb_(ho|lr)\.(r|l|c)1.*'
-my_filter_string = 'bb_(ho)\.(r|l|c)1.*'
+my_filter_string = 'bb_(ho|lr)\.(r|l|c)1.*'
+#Xmy_filter_string = 'bb_(ho)\.(r|l|c)1.*'
 
 for beam in ['b1','b2']:
     twiss_filtered[beam]  = twiss[beam][:, my_filter_string]
@@ -161,7 +161,7 @@ plt.ylabel('B_w_s')
 plt.title('Filtering by '+my_filter_string)
 
 # %%
-index_bb = 30
+index_bb = 5
 dtune.DQx_DQy([0.000001], 
               [0.000001], dx_sig[index_bb], 
                       dy_sig[index_bb], 
@@ -178,6 +178,25 @@ dtune.DQx_DQy([0.05],
                       1,  
                       1,  
                       xi=1, 
+                      fw=1)
+# %%
+dtune.DQx_DQy(ax, 
+              ay, 0, 
+                      0, 
+                      1,  
+                      1,  
+                      1,  
+                      xi=1, 
+                      fw=1)
+
+# %%
+DQx_HO,DQy_HO = dtune.DQx_DQy(ax, 
+              ay, 0, 
+                      0, 
+                      1,  
+                      1,  
+                      1,  
+                      xi=1e-2, 
                       fw=1)
 # %%
 
@@ -218,27 +237,27 @@ dtune.DQx_DQy([0.05],
 
 # # Close-up and zoomed out plot
 # #====================================================
-# Qx_0,Qy_0 = 0.31, 0.32
-# fp_x = Qx_0 + DQx_HO
-# fp_y = Qy_0 + DQy_HO
+Qx_0,Qy_0 = 0.31, 0.32
+fp_x = Qx_0 + DQx_HO
+fp_y = Qy_0 + DQy_HO
 
-# for window in [0.01,0.05]:
+for window in [0.01,0.05]:
 
-#     Qx_lim    = [Qx_0-3*window/4,Qx_0+window/4]
-#     Qy_lim    = [Qy_0-3*window/4,Qy_0+window/4]
+    Qx_lim    = [Qx_0-3*window/4,Qx_0+window/4]
+    Qy_lim    = [Qy_0-3*window/4,Qy_0+window/4]
 
-#     plt.figure(figsize=(6,6))
-#     bbplt.workingDiagram(order=12,Qx_range=Qx_lim,Qy_range = Qy_lim,alpha=0.15)
+    plt.figure(figsize=(6,6))
+    bbplt.workingDiagram(order=12,Qx_range=Qx_lim,Qy_range = Qy_lim,alpha=0.15)
 
-#     bbplt.polarmesh(fp_x,fp_y,alpha=0.1,r=coordinates['r_sig'],theta=coordinates['theta_sig'],color='darkslateblue')
-#     plt.scatter(fp_x,fp_y,s = 30*sciStat.norm.pdf(coordinates['r_sig'])/sciStat.norm.pdf(0),zorder=10)
-#     plt.plot(Qx_0,Qy_0,'P',color='C3',alpha=0.8,label='Unperturbed')
+    bbplt.polarmesh(fp_x,fp_y,alpha=0.1,r=coordinates['r_sig'],theta=coordinates['theta_sig'],color='darkslateblue')
+    plt.scatter(fp_x,fp_y,s = 30*sciStat.norm.pdf(coordinates['r_sig'])/sciStat.norm.pdf(0),zorder=10)
+    plt.plot(Qx_0,Qy_0,'P',color='C3',alpha=0.8,label='Unperturbed')
 
-#     plt.legend(loc='upper right')
-#     plt.axis('square')
-#     plt.xlim(Qx_lim)
-#     plt.ylim(Qy_lim)
-#     plt.tight_layout()
+    plt.legend(loc='upper right')
+    plt.axis('square')
+    plt.xlim(Qx_lim)
+    plt.ylim(Qy_lim)
+    plt.tight_layout()
 # #====================================================
 
 # %%
@@ -260,6 +279,8 @@ for my_index, bb in enumerate(name_weak):
 def func(a, b):
     return {'test':(a + b, a * b)}
 
+
+
 def myDQx_DQy(bb_name,  r,
                 dx_sig, 
                 dy_sig, 
@@ -268,12 +289,13 @@ def myDQx_DQy(bb_name,  r,
                 xi ):
     return {bb_name: (dtune.DQx_DQy(coordinates['x_sig'],
                                     coordinates['y_sig'],
-                                r     , #= r[my_index],
                                 dx_sig, # = dx_sig[my_index],
                                 dy_sig, # = dy_sig[my_index],
                                 A_w_s , # = A_w_s[my_index],
                                 B_w_s , # = B_w_s[my_index],
-                                xi    ))}# = xi_list[my_index])
+                                r     , #= r[my_index],
+                                xi,
+                                fw=1   ))}# = xi_list[my_index])
 
 # myDQx_DQy(name_weak[0],r[0],dx_sig[0],dy_sig[0],A_w_s[0],B_w_s[0],xi_list[0])
 with Pool(64) as pool:
@@ -309,12 +331,12 @@ def nan_to_zero(my_array):
     my_array[np.isnan(my_array)] = 0
     return my_array
 
-delta_qx= 0
-delta_qy= 0
+DQx_HO= 0
+DQy_HO = 0
 for my_bb in dict_result.keys():
     print(my_bb)
-    delta_qx+=nan_to_zero(dict_result[my_bb][0])
-    delta_qy+=nan_to_zero(dict_result[my_bb][1])
+    DQx_HO+=nan_to_zero(dict_result[my_bb][0])
+    DQy_HO+=nan_to_zero(dict_result[my_bb][1])
 
 # %%
 
@@ -322,10 +344,10 @@ for my_bb in dict_result.keys():
 
 Qx_0,Qy_0 = 0.31, 0.32
 
-fp_x = Qx_0 + delta_qx
-fp_y = Qy_0 + delta_qy
+fp_x = Qx_0 + DQx_HO
+fp_y = Qy_0 + DQy_HO
 
-for window in [0.01,0.03]:
+for window in [0.01,0.05]:
 
     Qx_lim    = [Qx_0-3*window/4,Qx_0+window/4]
     Qy_lim    = [Qy_0-3*window/4,Qy_0+window/4]
