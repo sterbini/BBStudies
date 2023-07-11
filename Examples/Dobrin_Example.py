@@ -280,4 +280,13 @@ with Pool(64) as pool:
                                         B_w_s, 
                                         xi_list))
 
+# %% BUG
+dtune.DQx_DQy(  ax     = [coordinates['x_sig'].values[1]],
+                                ay     = [coordinates['y_sig'].values[1]],
+                                r      = r[0],
+                                dx_sig = dx_sig[0],
+                                dy_sig = dy_sig[0],
+                                A_w_s  = A_w_s[0],
+                                B_w_s  = B_w_s[0],
+                                xi     = xi_list[0])
 # %%
