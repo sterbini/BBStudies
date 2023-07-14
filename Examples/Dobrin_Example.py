@@ -37,7 +37,7 @@ for seq in ['lhcb1','lhcb2']:
         survey[_beam] = collider[seq].survey(element0='ip1')#.to_pandas(index="name")
     elif _beam == 'b2':
         twiss[_beam]   = collider[seq].twiss().reverse()#.to_pandas(index="name")
-        survey[_beam]  = collider[seq].survey(element0='ip1')#.reverse().to_pandas(index="name")
+        survey[_beam]  = collider[seq].survey(element0='ip1').reverse()#.to_pandas(index="name")
 
 
 assert (survey['b1']['X','ip1']-survey['b2']['X','ip1'])==0
