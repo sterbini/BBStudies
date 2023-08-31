@@ -18,8 +18,8 @@ bash ./Executables/Miniconda3-latest.sh -b  -p ./Executables/miniconda -f
 
 # create your own virtual environment in a new folder
 source ./Executables/miniconda/bin/activate
-python -m venv ./Executables/py_BB
-source ./Executables/py_BB/bin/activate
+#python -m venv ./Executables/py_BB
+#source ./Executables/py_BB/bin/activate
 
 
 # Install generic python packages
@@ -47,34 +47,34 @@ python -m ipykernel install --user --name py_BB --display-name "py_BB"
 #=========================================
 pip install cpymad
 
-git clone https://github.com/lhcopt/lhcmask.git ./Executables/py_BB/lhcmask
-pip install -e ./Executables/py_BB/lhcmask
+git clone https://github.com/lhcopt/lhcmask.git ./Executables/miniconda/lhcmask
+pip install -e ./Executables/miniconda/lhcmask
 
-git clone https://github.com/xsuite/xobjects ./Executables/py_BB/xobjects
-pip install -e ./Executables/py_BB/xobjects
+git clone https://github.com/xsuite/xobjects ./Executables/miniconda/xobjects
+pip install -e ./Executables/miniconda/xobjects
 
-git clone https://github.com/xsuite/xdeps ./Executables/py_BB/xdeps
-pip install -e ./Executables/py_BB/xdeps
+git clone https://github.com/xsuite/xdeps ./Executables/miniconda/xdeps
+pip install -e ./Executables/miniconda/xdeps
 
-git clone https://github.com/xsuite/xpart ./Executables/py_BB/xpart
-pip install -e ./Executables/py_BB/xpart
+git clone https://github.com/xsuite/xpart ./Executables/miniconda/xpart
+pip install -e ./Executables/miniconda/xpart
 
-git clone https://github.com/xsuite/xtrack ./Executables/py_BB/xtrack
-pip install -e ./Executables/py_BB/xtrack
+git clone https://github.com/xsuite/xtrack ./Executables/miniconda/xtrack
+pip install -e ./Executables/miniconda/xtrack
 
-git clone https://github.com/xsuite/xfields ./Executables/py_BB/xfields
-pip install -e ./Executables/py_BB/xfields
+git clone https://github.com/xsuite/xfields ./Executables/miniconda/xfields
+pip install -e ./Executables/miniconda/xfields
 
-git clone https://github.com/PyCOMPLETE/FillingPatterns.git ./Executables/py_BB/FillingPatterns
-pip install -e ./Executables/py_BB/FillingPatterns
+git clone https://github.com/PyCOMPLETE/FillingPatterns.git ./Executables/miniconda/FillingPatterns
+pip install -e ./Executables/miniconda/FillingPatterns
 
-git clone https://github.com/xsuite/tree_maker.git ./Executables/py_BB/tree_maker
-python -m pip install -e ./Executables/py_BB/tree_maker
+git clone https://github.com/xsuite/tree_maker.git ./Executables/miniconda/tree_maker
+python -m pip install -e ./Executables/miniconda/tree_maker
 
-git clone https://github.com/xsuite/xmask.git ./Executables/py_BB/xmask
-python -m pip install -e ./Executables/py_BB/xmask
+git clone https://github.com/xsuite/xmask.git ./Executables/miniconda/xmask
+python -m pip install -e ./Executables/miniconda/xmask
 
-cd ./Executables/py_BB/xmask
+cd ./Executables/miniconda/xmask
 git submodule init
 git submodule update
 cd ../../../
