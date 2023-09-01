@@ -1,10 +1,5 @@
 # %%
 import numpy as np
-dir='/home/kaltchev/BBStudies_old/Examples/AsPaper/mydata/'
-#import os
-#os.listdir(dir)
-
-# %%
 import sys
 print(sys.path)
 sys.path.append('../../')
@@ -38,7 +33,7 @@ dtune.DQXW(ax=1,ay=1,dx=1,dy=.1,r=1)
 # %%
 import time
 model='BBLR'
-model1='IW'
+model='IW'
 model1='OCT'
 
 if model=='BBLR':
@@ -69,6 +64,7 @@ import itertools
 colors = itertools.cycle(('r', 'g', 'b', 'y')) 
 plt.ticklabel_format(style='sci', axis='both', scilimits=(-2,-2))
 
+dir='../Examples_Dobrin/mydata/'
 for ipcase in ['ip1','ip5']:
 #for ipcase in ['ip1']:
     pars = np.loadtxt(dir+'lrtab4py_'+ipcase+'.dat')
