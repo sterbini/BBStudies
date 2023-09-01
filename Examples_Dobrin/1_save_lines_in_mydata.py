@@ -1,7 +1,7 @@
 # %%
 import numpy as np
 import sys
-sys.path.append('../../')
+sys.path.append('../')
 
 import xtrack as xt
 
@@ -12,7 +12,7 @@ import BBStudies.Physics.Constants as cst
 
 
 # %%
-my_json = ('../../BBStudies/Run3_configuration/'
+my_json = ('../BBStudies/Run3_configuration/'
            '2_configure_and_track/'
            'final_collider.json')
 collider = xt.Multiline.from_json(my_json)
@@ -25,7 +25,7 @@ survey = {}
 
 # choose line to be saved in mydata -- need IR1 and IR5
 ipcase='ip1'
-ipcase='ip5'
+#ipcase='ip5'
 
 #collider.vars['vrf400'] = 12.0
 #collider.vars['lagrf400.b1'] = 0.5
@@ -205,10 +205,12 @@ plt.title('Filtering by '+my_filter_string)
 plt.xticks(fontsize=11,fontweight = 'bold',rotation = 90)
 
 # %%
-dir='../AsPaper/mydata/'
+dir='../Examples_Dobrin/mydata/'
 
 np.savetxt(dir+'names4py_'+ipcase+".dat",np.array(names), fmt='%s')
 
 tmp=np.array([s,dx_sig,dy_sig,r,A_w_s,B_w_s]) 
 tmp=np.transpose(tmp)
 np.savetxt(dir+'lrtab4py_'+ipcase+".dat",tmp, fmt='%14.10f')
+
+# %%

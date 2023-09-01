@@ -1,7 +1,7 @@
 # %%
 import numpy as np
 import sys
-sys.path.append('../../')
+sys.path.append('../')
 
 import xtrack as xt
 
@@ -11,7 +11,7 @@ import BBStudies.Plotting.BBPlots as bbplt
 import BBStudies.Physics.Constants as cst
 
 # %%
-my_json = ('../../BBStudies/Run3_configuration/'
+my_json = ('../BBStudies/Run3_configuration/'
            '2_configure_and_track/'
            'final_collider.json')
 collider = xt.Multiline.from_json(my_json)

@@ -1,8 +1,13 @@
 # %%
 import numpy as np
-dir='/home/kaltchev/BBStudies_old/Examples/AsPaper/mydata/'
-#import os
-#os.listdir(dir)
+import os
+dir="./"
+os.listdir(dir)
+
+# %%
+dir='../Examples/Dobrin_Examples/mydata/'
+
+
 import matplotlib.pyplot as plt
 
 ipcase='ip1'

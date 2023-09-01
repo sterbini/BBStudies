@@ -1,8 +1,5 @@
 # %%
 import numpy as np
-dir='/home/kaltchev/BBStudies_old/Examples/AsPaper/mydata/'
-#import os
-#os.listdir(dir)
 
 # %%
 import sys
@@ -50,6 +47,14 @@ if model=='OCT':
     def USEY(ax,ay,dx,dy,r):  return  dtune.DQYOC(ax,ay,dx,dy,r)
 
 # %%
+import os
+#to get the current working directory
+curr_dir = os.getcwd()
+
+print(curr_dir)
+# %%
+dir='/home/kaltchev/BBStudies_old/Examples/AsPaper/mydata/'
+
 ipcase='ip1'
 ipcase='ip5'
 pars = np.loadtxt(dir+'lrtab4py_'+ipcase+'.dat')
