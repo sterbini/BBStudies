@@ -227,7 +227,4 @@ np.savetxt(dir+'lrtab4py_'+ipcase+".dat",tmp, fmt='%14.10f')
 
 
 # %%
-# %%
-
-# %%
 
