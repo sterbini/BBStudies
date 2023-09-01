@@ -23,8 +23,9 @@ line   = {}
 twiss  = {}
 survey = {}
 
+# choose line to be saved in mydata -- need IR1 and IR5
 ipcase='ip1'
-#ipcase='ip5'
+ipcase='ip5'
 
 #collider.vars['vrf400'] = 12.0
 #collider.vars['lagrf400.b1'] = 0.5
@@ -82,28 +83,21 @@ plt.axis('square')
 # %%
 twiss_filtered = {}
 survey_filtered = {}
-my_filter_string = 'bb_(ho|lr)\.(r|l|c)1.*'
-my_filter_string = 'bb_(lr)\.(r|l|c)1.*'
-my_filter_string = 'bb_(lr)\.(r|l|c)1.*'
+#my_filter_string = 'bb_(ho|lr)\.(r|l|c)1.*'
+#my_filter_string = 'bb_(lr)\.(r|l|c)1.*'
+#my_filter_string = 'bb_(lr)\.(r|l|c)1.*'
 
 #dobrin choose only slot #12
 #my_filter_string = 'bb_(lr)\.(r|l|c)(1|5).*_12'
 
 #dobrin choose only 
-my_filter_string = 'bb_(lr)\.(r|l|c)1.*'
+#my_filter_string = 'bb_(lr)\.(r|l|c)1.*'
 
 
 if ipcase == 'ip1':
 	my_filter_string = 'bb_(lr)\.(r|l|c)1.*'	
 elif ipcase == 'ip5':
 	my_filter_string = 'bb_(lr)\.(r|l|c)5.*'
-
-"""
-if ipcase == 'ip1':
-	my_filter_string = 'bb_(lr)\.(r|l|c)1.*_25'	
-elif ipcase == 'ip5':
-	my_filter_string = 'bb_(lr)\.(r|l|c)5.*_25'
-"""
 
 #dobrin choose only slot outside #.. 
 #my_filter_string = 'bb_(lr)\.(r|l|c)1.*12'
@@ -211,12 +205,10 @@ plt.title('Filtering by '+my_filter_string)
 plt.xticks(fontsize=11,fontweight = 'bold',rotation = 90)
 
 # %%
-dir='/home/kaltchev/BBStudies_old/Examples/AsPaper/mydata/'
+dir='../AsPaper/mydata/'
 
 np.savetxt(dir+'names4py_'+ipcase+".dat",np.array(names), fmt='%s')
 
 tmp=np.array([s,dx_sig,dy_sig,r,A_w_s,B_w_s]) 
 tmp=np.transpose(tmp)
 np.savetxt(dir+'lrtab4py_'+ipcase+".dat",tmp, fmt='%14.10f')
-
-
