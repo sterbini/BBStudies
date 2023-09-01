@@ -10,6 +10,7 @@ import BBStudies.Physics.Base as phys
 import BBStudies.Plotting.BBPlots as bbplt
 import BBStudies.Physics.Constants as cst
 
+
 # %%
 my_json = ('../../BBStudies/Run3_configuration/'
            '2_configure_and_track/'
