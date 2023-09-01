@@ -1,17 +1,16 @@
 # %%
 import numpy as np
 import os
-dir="./"
-os.listdir(dir)
+ 
 
 # %%
-dir='../Examples/Dobrin_Examples/mydata/'
-
+#read saved lines
+dir='../Examples_Dobrin/mydata/'
 
 import matplotlib.pyplot as plt
 
 ipcase='ip1'
-#ipcase='ip5'
+ipcase='ip5'
 
 pars = np.loadtxt(dir+'lrtab4py_'+ipcase+'.dat')
 lrparam = np.array(pars)  
