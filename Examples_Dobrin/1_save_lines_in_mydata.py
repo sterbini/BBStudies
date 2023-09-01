@@ -25,7 +25,7 @@ survey = {}
 
 # choose line to be saved in mydata -- need IR1 and IR5
 ipcase='ip1'
-#ipcase='ip5'
+ipcase='ip5'
 
 #collider.vars['vrf400'] = 12.0
 #collider.vars['lagrf400.b1'] = 0.5
