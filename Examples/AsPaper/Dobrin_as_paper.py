@@ -212,19 +212,11 @@ plt.xticks(fontsize=11,fontweight = 'bold',rotation = 90)
 
 # %%
 dir='/home/kaltchev/BBStudies_old/Examples/AsPaper/mydata/'
-print(ipcase)
 
 np.savetxt(dir+'names4py_'+ipcase+".dat",np.array(names), fmt='%s')
 
-
-# %%
-#import subprocess
-#subprocess.run(["rm", "-f",dir+"*"])
-#----
 tmp=np.array([s,dx_sig,dy_sig,r,A_w_s,B_w_s]) 
 tmp=np.transpose(tmp)
 np.savetxt(dir+'lrtab4py_'+ipcase+".dat",tmp, fmt='%14.10f')
 
-
-# %%
 
