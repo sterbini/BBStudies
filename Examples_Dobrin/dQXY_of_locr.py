@@ -1,16 +1,23 @@
 # %%
 import numpy as np
-dir='/home/kaltchev/BBStudies_old/Examples/AsPaper/mydata/'
+import sys
+
+sys.path.append('../../')
+import BBStudies.Physics.Base as phys
+import BBStudies.Physics.Detuning_as_paper as dtune
 # %%
-ipcase='ip1'
-#ipcase='ip5'
-# %%
+import numpy as np
 import sys
 print(sys.path)
 sys.path.append('../../')
 import BBStudies.Physics.Base as phys
 import BBStudies.Physics.Detuning_as_paper as dtune
+
 # %%
+ipcase='ip1'
+#ipcase='ip5'
+dir='../Examples_Dobrin/mydata/'
+
 pars = np.loadtxt(dir+'lrtab4py_'+ipcase+'.dat')
 lrparam = np.array(pars)  
 with open(dir+'names4py_'+ipcase+'.dat') as f:

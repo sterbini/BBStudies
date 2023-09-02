@@ -27,7 +27,7 @@ plt.axis('square')
 
 # %%
 # single call for test
-#dtune.DQXW(ax=1,ay=1,dx=1,dy=.1,r=1)
+dtune.DQXW(ax=1,ay=1,dx=1,dy=.1,r=1)
 
 
 # %%
@@ -48,8 +48,16 @@ if model=='OCT':
 
 
 # %%
-#USEX(ax=1,ay=1,dx=1,dy=.1,r=1)
+USEX(ax=1,ay=1,dx=1,dy=.1,r=1)
 
+
+# %%
+"""
+ibb=12
+nL=int(n/2)-ibb
+rangen=list([nL,n-nL-1])
+rangen=range(n)
+"""
  
 # %%
 import itertools
@@ -58,6 +66,7 @@ plt.ticklabel_format(style='sci', axis='both', scilimits=(-2,-2))
 
 dir='../Examples_Dobrin/mydata/'
 for ipcase in ['ip1','ip5']:
+#for ipcase in ['ip1']:
     pars = np.loadtxt(dir+'lrtab4py_'+ipcase+'.dat')
     lrparam = np.array(pars)
 
@@ -120,12 +129,18 @@ for j in range(n_amp):
     sumx5[j]=np.sum( x_ip5[:,j])
     sumy5[j]=np.sum( y_ip5[:,j])
 
+
+# %%
+        
+plt.plot(
+    sumx1, sumy1 , 
+    ls="-",marker="x")
 # %%
 plt.plot(
-    sumx5, sumy5 , label='sum ir5',
+    sumx5, sumy5 , 
     ls="-",marker="x"
     )
-plt.title('model='+str(model))
+# %%
 plt.xlabel('DQx [$ xi $]')
 plt.ylabel('DQy [$ xi $]')
 plt.grid()
@@ -133,18 +148,7 @@ plt.legend()
 plt.axis('square') 
 
 # %%
-
-plt.plot(
-    sumx1, sumy1 ,  
-    sumx5, sumy5 ,  
-    ls="-",marker="x")
-plt.xlabel('DQx [$ xi $]')
-plt.ylabel('DQy [$ xi $]')
-plt.grid()
-plt.legend()
-plt.axis('square') 
-
-# %%
+        
 plt.plot(
     sumx1+sumx5, sumy1+sumy5, 
     ls="-",marker="x",label='ip1+ip5'
@@ -155,3 +159,50 @@ plt.ylabel('DQy [$ xi $]')
 plt.grid()
 plt.legend()
 plt.axis('square') 
+
+
+"""
+    
+markersize=10,
+markerfacecolor="none",
+markeredgecolor="red",
+markeredgewidth=2,
+label="analytic")
+"""
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        #psix=dx/r/ax
+        #psiy=dy/r/ax
+        #expo=1+2*psix**2+psiy**2
+        #print("fact expo",expo)
+        #print("around 10 psx=",dx/r/ax)
+		
+		
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+# %%
+
+    
+ 
+ 
+ 
+ 
