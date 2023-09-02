@@ -31,7 +31,6 @@ plt.axis('square')
 
 
 # %%
-import time
 #model='BBLR'
 model='IW'
 #model='OCT'
@@ -52,6 +51,7 @@ if model=='OCT':
 
  
 # %%
+import time
 import itertools
 colors = itertools.cycle(('r', 'g', 'b', 'y')) 
 plt.ticklabel_format(style='sci', axis='both', scilimits=(-2,-2))
