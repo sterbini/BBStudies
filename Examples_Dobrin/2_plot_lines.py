@@ -12,8 +12,8 @@ import matplotlib.pyplot as plt
 ipcase='ip1'
 ipcase='ip5'
 
-pars = np.loadtxt(MyDataDir+'lrtab4py_'+ipcase+'.dat')
-lrparam = np.array(pars)  
+params = np.loadtxt(MyDataDir+'lrtab4py_'+ipcase+'.dat')
+params = np.array(params)  
 with open(MyDataDir+'names4py_'+ipcase+'.dat') as f:
         names = f.readlines()
 n=len(names)
@@ -29,7 +29,7 @@ A_w_s=np.zeros(n)
 B_w_s=np.zeros(n)
 
 for i in range(n):            
-        s[i],dx[i], dy[i] , r[i],A_w_s[i],B_w_s[i]=lrparam[i]
+        s[i],dx[i], dy[i] , r[i],A_w_s[i],B_w_s[i]=params[i]
 
 
 xing=145

@@ -59,8 +59,8 @@ plt.ticklabel_format(style='sci', axis='both', scilimits=(-2,-2))
 
 MyDataDir='../Examples_Dobrin/mydata/'
 for ipcase in ['ip1','ip5']:
-    pars = np.loadtxt(MyDataDir+'lrtab4py_'+ipcase+'.dat')
-    lrparam = np.array(pars)
+    params = np.loadtxt(MyDataDir+'lrtab4py_'+ipcase+'.dat')
+    params = np.array(params)
 
     with open(MyDataDir+'names4py_'+ipcase+'.dat') as f:
    	    names = f.readlines()
@@ -76,7 +76,7 @@ for ipcase in ['ip1','ip5']:
     y_tab=np.array(y_tab,dtype=np.float64)
     
     for i in range(n):
-         s,dx, dy , r,A,B=lrparam[i]
+         s,dx, dy , r,A,B=params[i]
          print("bb ",i, names[i],   " dx,dy=",dx,dy)
 
          s_time = time.time()
@@ -126,7 +126,7 @@ plt.plot(
     sumx5, sumy5 , label='sum ir5',
     ls="-",marker="x"
     )
-plt.title('UseModel='+str(UseModel))
+plt.title(' Model used is '+str(UseModel))
 plt.xlabel('DQx [$ xi $]')
 plt.ylabel('DQy [$ xi $]')
 plt.grid()
