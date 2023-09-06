@@ -12,9 +12,9 @@ import matplotlib.pyplot as plt
 ipcase='ip1'
 ipcase='ip5'
 
-params = np.loadtxt(MyDataDir+'lrtab4py_'+ipcase+'.dat')
+params = np.loadtxt(MyDataDir+'data_'+ipcase+'.dat')
 params = np.array(params)  
-with open(MyDataDir+'names4py_'+ipcase+'.dat') as f:
+with open(MyDataDir+'names_'+ipcase+'.dat') as f:
         names = f.readlines()
 n=len(names)
 for i in range(n):

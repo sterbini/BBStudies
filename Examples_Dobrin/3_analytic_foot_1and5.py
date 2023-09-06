@@ -31,10 +31,12 @@ plt.axis('square')
 
 
 # %%
-# choose the collision model  
+# choose the collision model -- IW is faster than BBLR  
+
 #UseModel='BBLR'
 UseModel='IW'
-UseModel='OCT'
+#UseModel='OCT'
+
 # this model defines the dtune function to be used
 if UseModel=='BBLR':
     def USEX(ax,ay,dx,dy,r):  return  dtune.DQX(ax,ay,dx,dy,r)
@@ -59,10 +61,10 @@ plt.ticklabel_format(style='sci', axis='both', scilimits=(-2,-2))
 
 MyDataDir='../Examples_Dobrin/mydata/'
 for ipcase in ['ip1','ip5']:
-    params = np.loadtxt(MyDataDir+'lrtab4py_'+ipcase+'.dat')
+    params = np.loadtxt(MyDataDir+'data_'+ipcase+'.dat')
     params = np.array(params)
 
-    with open(MyDataDir+'names4py_'+ipcase+'.dat') as f:
+    with open(MyDataDir+'names_'+ipcase+'.dat') as f:
    	    names = f.readlines()
     n=len(names)
      
