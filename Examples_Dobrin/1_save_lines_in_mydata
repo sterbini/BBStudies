@@ -22,9 +22,9 @@ line   = {}
 twiss  = {}
 survey = {}
 
-# choose line to be saved in mydata -- need IR1 and IR5
+# saving IR1, IR5 lines in mydata/  
 ipcase='ip1'
-ipcase='ip5'
+#ipcase='ip5'
 
 #collider.vars['vrf400'] = 12.0
 #collider.vars['lagrf400.b1'] = 0.5
@@ -205,10 +205,10 @@ plt.xticks(fontsize=11,fontweight = 'bold',rotation = 90)
 
 # %%
 MyDataDir='../Examples_Dobrin/mydata/'
-np.savetxt(MyDataDir+'names4py_'+ipcase+".dat",np.array(names), fmt='%s')
+np.savetxt(MyDataDir+'names_'+ipcase+".dat",np.array(names), fmt='%s')
 
 tmp=np.array([s,dx_sig,dy_sig,r,A_w_s,B_w_s]) 
 tmp=np.transpose(tmp)
-np.savetxt(MyDataDir+'lrtab4py_'+ipcase+".dat",tmp, fmt='%14.10f')
+np.savetxt(MyDataDir+'data_'+ipcase+".dat",tmp, fmt='%14.10f')
 
 # %%
