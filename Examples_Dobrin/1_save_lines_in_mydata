@@ -204,11 +204,11 @@ plt.title('Filtering by '+my_filter_string)
 plt.xticks(fontsize=11,fontweight = 'bold',rotation = 90)
 
 # %%
-dir='../Examples_Dobrin/mydata/'
-np.savetxt(dir+'names4py_'+ipcase+".dat",np.array(names), fmt='%s')
+MyDataDir='../Examples_Dobrin/mydata/'
+np.savetxt(MyDataDir+'names4py_'+ipcase+".dat",np.array(names), fmt='%s')
 
 tmp=np.array([s,dx_sig,dy_sig,r,A_w_s,B_w_s]) 
 tmp=np.transpose(tmp)
-np.savetxt(dir+'lrtab4py_'+ipcase+".dat",tmp, fmt='%14.10f')
+np.savetxt(MyDataDir+'lrtab4py_'+ipcase+".dat",tmp, fmt='%14.10f')
 
 # %%

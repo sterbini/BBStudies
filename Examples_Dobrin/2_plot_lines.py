@@ -5,16 +5,16 @@ import os
 
 # %%
 #read saved lines
-dir='../Examples_Dobrin/mydata/'
+MyDataDir='../Examples_Dobrin/mydata/'
 
 import matplotlib.pyplot as plt
 
 ipcase='ip1'
 ipcase='ip5'
 
-pars = np.loadtxt(dir+'lrtab4py_'+ipcase+'.dat')
+pars = np.loadtxt(MyDataDir+'lrtab4py_'+ipcase+'.dat')
 lrparam = np.array(pars)  
-with open(dir+'names4py_'+ipcase+'.dat') as f:
+with open(MyDataDir+'names4py_'+ipcase+'.dat') as f:
         names = f.readlines()
 n=len(names)
 for i in range(n):
