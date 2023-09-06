@@ -19,8 +19,8 @@ coordinates = phys.polar_grid(  r_sig     = np.linspace(1,6.5,5),
                                 emitt     = [2.5e-6/7000,2.5e-6/7000])
 
 n_amp=len(coordinates['x_sig']) #total ampl points
-ax_sig = coordinates['x_sig'] 
-ay_sig = coordinates['y_sig'] 
+ax_tab = coordinates['x_sig'] 
+ay_tab = coordinates['y_sig'] 
 plt.figure()
 plt.plot(coordinates.x_sig,coordinates.y_sig,'o')
 plt.axis('square')
@@ -31,11 +31,11 @@ plt.axis('square')
 
 
 # %%
-# choose the collision model -- IW is faster than BBLR  
+# choose the collision model (IW is faster than BBLR)  
 
 #UseModel='BBLR'
 UseModel='IW'
-#UseModel='OCT'
+UseModel='OCT'
 
 # this model defines the dtune function to be used
 if UseModel=='BBLR':
@@ -60,31 +60,32 @@ colors = itertools.cycle(('r', 'g', 'b', 'y'))
 plt.ticklabel_format(style='sci', axis='both', scilimits=(-2,-2))
 
 MyDataDir='../Examples_Dobrin/mydata/'
+
 for ipcase in ['ip1','ip5']:
     params = np.loadtxt(MyDataDir+'data_'+ipcase+'.dat')
     params = np.array(params)
 
     with open(MyDataDir+'names_'+ipcase+'.dat') as f:
    	    names = f.readlines()
-    n=len(names)
-     
-    for i in range(n):
-        names[i]=names[i][6:8]+names[i][10:]
+    n_bb=len(names)
+    
+    for i in range(n_bb):
+        names[i]=names[i][6:8]+names[i][10:13]
         names[i]=names[i].upper()
         
-    x_tab = [[0 for col in range(n_amp)] for row in range(n)]
-    y_tab = [[0 for col in range(n_amp)] for row in range(n)]
+    x_tab = [[0 for col in range(n_amp)] for row in range(n_bb)]
+    y_tab = [[0 for col in range(n_amp)] for row in range(n_bb)]
     x_tab=np.array(x_tab,dtype=np.float64)
     y_tab=np.array(y_tab,dtype=np.float64)
     
-    for i in range(n):
+    for i in range(n_bb):
          s,dx, dy , r,A,B=params[i]
          print("bb ",i, names[i],   " dx,dy=",dx,dy)
 
          s_time = time.time()
          for j in range(n_amp):
-             ax = ax_sig[j] 
-             ay = ay_sig[j]
+             ax = ax_tab[j] 
+             ay = ay_tab[j]
              x_tab[i,j]=A**2*USEX(A*ax,B*ay,dx,dy,r)
              y_tab[i,j]=B**2*USEY(A*ax,B*ay,dx,dy,r)
              #print(ax,ay,x[i,j],y[i,j])
@@ -96,7 +97,7 @@ for ipcase in ['ip1','ip5']:
     else:
         x_tab5,y_tab5=x_tab,y_tab
 # %%
-for i in range(n):
+for i in range(n_bb):
     x_individ5=x_tab5[i,:]
     y_individ5=y_tab5[i,:]
     plt.plot(

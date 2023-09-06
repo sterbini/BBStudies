@@ -18,7 +18,7 @@ with open(MyDataDir+'names_'+ipcase+'.dat') as f:
         names = f.readlines()
 n=len(names)
 for i in range(n):
-    names[i]=names[i][6:8]+names[i][10:]
+    names[i]=names[i][6:8]+names[i][10:13]
     names[i]=names[i].upper()
 print(names)
 s=np.zeros(n)
