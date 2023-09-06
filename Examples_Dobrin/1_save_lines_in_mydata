@@ -4,7 +4,6 @@ import sys
 sys.path.append('../')
 
 import xtrack as xt
-
 import BBStudies.Physics.Detuning_code as dtune
 import BBStudies.Physics.Base as phys
 import BBStudies.Plotting.BBPlots as bbplt
@@ -206,7 +205,6 @@ plt.xticks(fontsize=11,fontweight = 'bold',rotation = 90)
 
 # %%
 dir='../Examples_Dobrin/mydata/'
-
 np.savetxt(dir+'names4py_'+ipcase+".dat",np.array(names), fmt='%s')
 
 tmp=np.array([s,dx_sig,dy_sig,r,A_w_s,B_w_s]) 
