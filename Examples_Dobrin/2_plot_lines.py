@@ -43,7 +43,7 @@ x=names
 # x=s
 
 case=0#-1#0
-case=-1#-1#0
+#case=-1#-1#0
 
 dataset_1,lab1 = r,r'$r$'
 dataset_2,lab2 = dx/r,r'$d_x/r=d_x^{\tt N} $'
@@ -93,7 +93,6 @@ if case==0:
    ax.set_ylabel(r'$ d_x/r= \psi_x a_x$'+',    '+r'$ d_y= \psi_z  a_x$')
    ax2.set_ylabel(r'$r$')
    ax.set_ylim(-100, 100)
-
 else:
    ax.set_xlabel(r'$\bf \leftarrow   { \tt BBLR\ names}\rightarrow$')
    ax.set_ylabel(r'$ \psi_i$')
@@ -115,7 +114,7 @@ plt.text(3/4*xx,down -.0, 'IP5',  rotation=0, wrap=False, size=20)
 #ax.set_ylim(-20, 100)
 plt.tight_layout()
 # export plot
-plt.savefig("twofun"+".pdf")
+#plt.savefig("twofun"+".pdf")
 
 
 # %%

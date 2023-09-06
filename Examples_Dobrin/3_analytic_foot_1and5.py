@@ -1,7 +1,7 @@
 # %%
 import numpy as np
 import sys
-print(sys.path)
+#print(sys.path)
 sys.path.append('../../')
 import BBStudies.Physics.Base as phys
 import BBStudies.Physics.Detuning_as_paper as dtune
@@ -26,7 +26,7 @@ plt.plot(coordinates.x_sig,coordinates.y_sig,'o')
 plt.axis('square')
 
 # %%
-# single call for test
+# single call for a test
 #dtune.DQXW(ax=1,ay=1,dx=1,dy=.1,r=1)
 
 
