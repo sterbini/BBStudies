@@ -219,7 +219,7 @@ for my_index, bb in enumerate(name_weak):
         xi_list.append(xi)
 print("bb parameters are xi=",xi_list)        
 
-model=1
+model=0
 # Sum tuneshift for all
 for my_index, bb in enumerate(name_weak):
     print(f'Computing {bb}...')
