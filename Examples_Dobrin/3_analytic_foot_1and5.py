@@ -101,21 +101,22 @@ for ipcase in ['ip1','ip5']:
         x_tab1,y_tab1=x_tab,y_tab
     else:
         x_tab5,y_tab5=x_tab,y_tab
+        
 # %%
 import itertools
 for i in range(n_bb):
     x_individ5=x_tab1[i,:]
     y_individ5=y_tab1[i,:]
-    plt.plot(x_individ5, y_individ5, ls=" ", lw=3, 
-     marker='x',markersize=6, markerfacecolor=next(colors),markeredgecolor='red',
-     markeredgewidth=2,label=str(names[i])
+    plt.plot(x_individ5, y_individ5, ls=" ", lw=1, 
+     marker='x',markersize=3,color='red'  
+      
       )
 for i in range(n_bb):
     x_individ5=x_tab5[i,:]
     y_individ5=y_tab5[i,:]
-    plt.plot(x_individ5, y_individ5, ls=" ", lw=3, 
-     marker='x',markersize=6, markerfacecolor=next(colors),markeredgecolor='blue',
-     markeredgewidth=2,label=str(names[i])
+    plt.plot(x_individ5, y_individ5, ls=" ", lw=1, 
+     marker='o',markersize=1 ,color='blue'
+      
       )
 plt.grid()
 plt.axis('square') 
