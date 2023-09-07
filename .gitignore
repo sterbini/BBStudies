@@ -15,3 +15,5 @@ Data/Mask/**
 !Data/Mask/optics_specific_tools.py
 !Data/Mask/readme.md
 !Data/Mask/run_pymask.py
+Tests_Dobrin/
+
