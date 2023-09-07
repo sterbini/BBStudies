@@ -16,15 +16,15 @@ import BBStudies.Physics.Detuning_as_paper as dtune
 # %%
 ipcase='ip1'
 #ipcase='ip5'
-dir='../Examples_Dobrin/mydata/'
+dir='../Tests_Dobrin/mydata/'
 
-pars = np.loadtxt(dir+'lrtab4py_'+ipcase+'.dat')
+pars = np.loadtxt(dir+'data_'+ipcase+'.dat')
 lrparam = np.array(pars)  
-with open(dir+'names4py_'+ipcase+'.dat') as f:
+with open(dir+'names_'+ipcase+'.dat') as f:
     names = f.readlines()
 n=len(names)
 for i in range(n):
-    names[i]=names[i][6:8]+names[i][10:]
+    names[i]=names[i][6:8]+names[i][10:13]
     names[i]=names[i].upper()
 print(names)
 
@@ -65,8 +65,8 @@ dtune.DQX(1,1,1,1,1)
 # %%
 import time
 model='BBLR'
-model1='IW'
-model1='OCT'
+#model='IW'
+#model='OCT'
 
 if model=='BBLR':
     def USEX(ax,ay,dx,dy,r):  return  dtune.DQX(ax,ay,dx,dy,r)
@@ -89,6 +89,10 @@ for i in range(n):
     for j in range(namp):
         ax = ax_sig[j] #double to see
         ay = ay_sig[j]
+        if np.abs(dx)>40 :
+            ax=ax_tab[1] 
+            ay=ay_tab[1]
+            print("dx>40")) 
         qx[i,j]=A**2*(USEX(A*ax,B*ay,dx,dy,r))-0*USEX(.0001,.0001,dx,dy,r)
         qy[i,j]=A**2*(USEY(A*ax,B*ay,dx,dy,r))-0*USEY(.0001,.0001,dx,dy,r)
     e_time = time.time()
@@ -123,7 +127,7 @@ for j in range(namp):
                label='Qy '+'ax='+str(ax_sig[j]),c=cc, markersize=11)
 axL.set_xticks([1,7,n])
       
-plt.legend()
+#plt.legend()
 plt.grid()
 plt.show()
 
