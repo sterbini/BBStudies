@@ -2,10 +2,11 @@
 import numpy as np
 import sys
 #print(sys.path)
-sys.path.append('../../')
+sys.path.append('../')
 import BBStudies.Physics.Base as phys
 import BBStudies.Physics.Detuning_as_paper as dtune
-
+#import Base as phys
+#import Detuning_as_paper as dtune
 # %%
 import numpy as np
 import matplotlib.pyplot as plt
@@ -56,14 +57,14 @@ if UseModel=='OCT':
 import time
 
 
-plt.ticklabel_format(style='sci', axis='both', scilimits=(-2,-2))
-
-MyDataDir='../Examples_Dobrin/mydata/'
-
+MyDataDir='../Tests_Dobrin/mydata/'
+i_bb=0
 for ipcase in ['ip1','ip5']:
+    
     params = np.loadtxt(MyDataDir+'data_'+ipcase+'.dat')
-    params = np.array(params)
+#    params = np.loadtxt(MyDataDir+'data_'+ipcase+'_NOS.dat')
 
+    params = np.array(params)
     with open(MyDataDir+'names_'+ipcase+'.dat') as f:
    	    names = f.readlines()
     n_bb=len(names)
@@ -78,10 +79,10 @@ for ipcase in ['ip1','ip5']:
     y_tab=np.array(y_tab,dtype=np.float64)
     
     for i in range(n_bb):
+         i_bb=i_bb+1
          s,dx, dy , r,A,B=params[i]
-         print("bb ",i, names[i],   " dx,dy=",dx,dy)
-         #if "L1" in names[i]: 
-         #     print('aa')
+         print("i_bb ",i_bb, names[i],   " dx,dy=",dx,dy)
+         
 
          s_time = time.time()
          for j in range(n_amp):
@@ -98,26 +99,46 @@ for ipcase in ['ip1','ip5']:
          e_time = time.time()
          print(f'Execution time, {(e_time-s_time):.3f} s')
     if(ipcase=='ip1'):
-        x_tab1,y_tab1=x_tab,y_tab
+        names1,x_tab1,y_tab1=names,x_tab,y_tab
     else:
-        x_tab5,y_tab5=x_tab,y_tab
-        
+        names5,x_tab5,y_tab5=names,x_tab,y_tab
 # %%
+colors = ('r', 'g', 'b','y')
 import itertools
 for i in range(n_bb):
-    x_individ5=x_tab1[i,:]
-    y_individ5=y_tab1[i,:]
-    plt.plot(x_individ5, y_individ5, ls=" ", lw=1, 
-     marker='x',markersize=3,color='red'  
-      
-      )
-for i in range(n_bb):
+    if "L5" in names5[i]: 
+            cc=colors[0]
+    if "R5" in names5[i]: 
+            cc=colors[1]
+    if "L1" in names5[i]: 
+            cc=colors[2]
+    if "R1" in names5[i]: 
+            cc=colors[3]
     x_individ5=x_tab5[i,:]
     y_individ5=y_tab5[i,:]
-    plt.plot(x_individ5, y_individ5, ls=" ", lw=1, 
-     marker='o',markersize=1 ,color='blue'
+    plt.plot(x_individ5, y_individ5, ls="-", lw=1, 
+        marker='x',markersize=3,color=cc  
+      )
+plt.ticklabel_format(style='sci', axis='both', scilimits=(-2,-2))
+plt.grid()
+plt.axis('square')     
+# %%
+for i in range(n_bb):
+    if "L5" in names1[i]: 
+            cc=colors[0]
+    if "R5" in names1[i]: 
+            cc=colors[1]
+    if "L1" in names1[i]: 
+            cc=colors[2]
+    if "R1" in names1[i]: 
+            cc=colors[3]   
+    x_individ1=x_tab1[i,:]
+    y_individ1=y_tab1[i,:]
+    plt.plot(x_individ1, y_individ1, ls="-", lw=1, 
+     marker='o',markersize=3 ,color=cc
       
       )
+plt.ticklabel_format(style='sci', axis='both', scilimits=(-2,-2))
 plt.grid()
 plt.axis('square') 
 
@@ -170,3 +191,5 @@ plt.grid()
 plt.legend()
 plt.axis('square') 
 # %%
+
+plt.show()

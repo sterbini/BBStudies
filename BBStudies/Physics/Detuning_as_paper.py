@@ -150,13 +150,23 @@ def DQYW(ax,ay,dx,dy,r):
     return integrate.dblquad(kern ,0, 2*pi,0,2*pi)[0]
 
 
-# Octupole tune-shifts  ana_anyBB.nb
-def DQXOC(ax,ay,dx,dy,r):
+# Octupole tune-shifts  
+def DQXOC_FUN(ax,ay,dx,dy,r):
          return 3/2*( -2*ay**2 * r**2 +ax**2*r**4 )/dx**4
-
-def DQYOC(ax,ay,dx,dy,r):
+def DQYOC_FUN(ax,ay,dx,dy,r):
          return 3/2*(   ay**2  -    2*ax**2*r**2 )/dx**4
 
+def DQXOC(ax,ay,dx,dy,r):
+     if abs(dy)<0.1:
+              return  DQXOC_FUN(ax,ay,dx,dy,r)
+     else:
+              return  DQYOC_FUN(ay,ax,dy,dx,1/r)
+
+def DQYOC(ax,ay,dx,dy,r):
+     if abs(dy)<0.1:
+              return  DQYOC_FUN(ax,ay,dx,dy,r)
+     else:
+              return  DQXOC_FUN(ay,ax,dy,dx,1/r)
 
 # Quadrupole tune-shifts 
 def DQX0(dx,dy,r):
