@@ -85,7 +85,8 @@ for ipcase in ['ip1','ip5']:
                  resy=B**2*dtune.DQYW(A*ax,B*ay,dx,dy,r)            
              else:
                  resx=A**2*USEX(A*ax,B*ay,dx,dy,r)
-                 resy=B**2*USEY(A*ax,B*ay,dx,dy,r
+                 resy=B**2*USEY(A*ax,B*ay,dx,dy,r)
+
 
              x_tab[i,j]=resx
              y_tab[i,j]=resy
