@@ -30,7 +30,7 @@ plt.axis('square')
 # it defines the dtune function USEX,Y to be used
 
 UseModel='BBLR'
-#UseModel='IW'
+UseModel='IW'
 #UseModel='OCT'
 
 if UseModel=='BBLR':
@@ -46,7 +46,7 @@ if UseModel=='OCT':
 # %%
 psi_bb_as_wire=1.e100
 
-MyDataDir='../Tests_Dobrin/mydata/'
+MyDataDir='../Examples_Dobrin/mydata/'
 i_bb=0
 
 for ipcase in ['ip1','ip5']:
