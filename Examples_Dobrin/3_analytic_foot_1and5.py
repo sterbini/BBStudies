@@ -1,16 +1,17 @@
 # %%
 import numpy as np
 import sys
-#print(sys.path)
 sys.path.append('../')
 import BBStudies.Physics.Base as phys
-import BBStudies.Physics.Detuning_as_paper as dtune
-#import Base as phys
-#import Detuning_as_paper as dtune
+# memo: here with 2D Bessel L2 (the I2 was Detuning_as_paper.py)
+import BBStudies.Physics.Detuning_L2 as dtune
+
+
 # %%
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats as sciStat
+import time
 
 
 # %%
@@ -24,20 +25,14 @@ ay_tab = coordinates['y_sig']
 plt.figure()
 plt.plot(coordinates.x_sig,coordinates.y_sig,'o')
 plt.axis('square')
-
 # %%
-# single call for a test
-#dtune.DQXW(ax=1,ay=1,dx=1,dy=.1,r=1)
-
-
-# %%
-# choose the collision model (IW is faster than BBLR)  
+# Choose the collision Model (here IW is faster than BBLR)  
+# it defines the dtune function USEX,Y to be used
 
 UseModel='BBLR'
 UseModel='IW'
-#UseModel='OCT'
+UseModel='OCT'
 
-# this model defines the dtune function to be used
 if UseModel=='BBLR':
     def USEX(ax,ay,dx,dy,r):  return  dtune.DQX(ax,ay,dx,dy,r)
     def USEY(ax,ay,dx,dy,r):  return  dtune.DQY(ax,ay,dx,dy,r)
@@ -47,38 +42,32 @@ if UseModel=='IW':
 if UseModel=='OCT':
     def USEX(ax,ay,dx,dy,r):  return  dtune.DQXOC(ax,ay,dx,dy,r)
     def USEY(ax,ay,dx,dy,r):  return  dtune.DQYOC(ax,ay,dx,dy,r)
-
-
+    
 # %%
-#USEX(ax=1,ay=1,dx=1,dy=.1,r=1)
-
- 
-# %%
-import time
-
+psi_bb_as_wire=1.e100
 
 MyDataDir='../Tests_Dobrin/mydata/'
 i_bb=0
+
 for ipcase in ['ip1','ip5']:
-    
     params = np.loadtxt(MyDataDir+'data_'+ipcase+'.dat')
 #    params = np.loadtxt(MyDataDir+'data_'+ipcase+'_NOS.dat')
 
     params = np.array(params)
     with open(MyDataDir+'names_'+ipcase+'.dat') as f:
    	    names = f.readlines()
-    n_bb=len(names)
-    
-    for i in range(n_bb):
+    nbb=len(names)
+    n_bb=nbb
+    for i in range(nbb):
         names[i]=names[i][6:8]+names[i][10:13]
         names[i]=names[i].upper()
         
-    x_tab = [[0 for col in range(n_amp)] for row in range(n_bb)]
-    y_tab = [[0 for col in range(n_amp)] for row in range(n_bb)]
+    x_tab = [[0 for col in range(n_amp)] for row in range(nbb)]
+    y_tab = [[0 for col in range(n_amp)] for row in range(nbb)]
     x_tab=np.array(x_tab,dtype=np.float64)
     y_tab=np.array(y_tab,dtype=np.float64)
     
-    for i in range(n_bb):
+    for i in range(nbb):
          i_bb=i_bb+1
          s,dx, dy , r,A,B=params[i]
          print("i_bb ",i_bb, names[i],   " dx,dy=",dx,dy)
@@ -88,13 +77,34 @@ for ipcase in ['ip1','ip5']:
          for j in range(n_amp):
              ax = ax_tab[j] 
              ay = ay_tab[j]
-             if np.abs(dx)>40 :
-                 ax=ax_tab[1] 
-                 ay=ay_tab[1] 
+             psix_test=np.abs(dx/ax/r)
+             #psiz_test=np.abs(dy/ax)
+             
+             if psix_test > psi_bb_as_wire:
+                 resx=A**2*dtune.DQXW(A*ax,B*ay,dx,dy,r)
+                 resy=B**2*dtune.DQYW(A*ax,B*ay,dx,dy,r)            
+             else:
+                 resx=A**2*USEX(A*ax,B*ay,dx,dy,r)
+                 resy=B**2*USEY(A*ax,B*ay,dx,dy,r)
 
-             x_tab[i,j]=A**2*USEX(A*ax,B*ay,dx,dy,r)
-             y_tab[i,j]=B**2*USEY(A*ax,B*ay,dx,dy,r)
-             #print(ax,ay,x[i,j],y[i,j])
+#             resx=A**2*USEX(A*ax,B*ay,dx,dy,r)
+#             resy=B**2*USEY(A*ax,B*ay,dx,dy,r)
+#             resxIW=A**2*dtune.DQXW(A*ax,B*ay,dx,dy,r)
+#             resyIW=B**2*dtune.DQYW(A*ax,B*ay,dx,dy,r)
+#             errx_BBasIW=np.abs((resxIW-resx)/resx)
+#             erry_BBasIW=np.abs((resyIW-resy)/resy)
+#             #must be 2 for 10
+#             if errx_BBasIW > 0.001  and psix_test > 10 and ax >2:
+#                 print(f'large psi but NOT as IW  |psix|=, {psix_test:.3f} ')
+#                 print(f'                                          |psiz|=, {psiz_test:.3f} ')
+#                 print(ax,ay)
+#                 print(f'errx =, {  errx_BBasIW :.3e} ')
+#                 print(f'erry =, {  erry_BBasIW :.3e} ')
+
+             x_tab[i,j]=resx
+             y_tab[i,j]=resy
+
+#             print(ax,ay,x_tab[i,j],y_tab[i,j])
 
          e_time = time.time()
          print(f'Execution time, {(e_time-s_time):.3f} s')
@@ -103,9 +113,10 @@ for ipcase in ['ip1','ip5']:
     else:
         names5,x_tab5,y_tab5=names,x_tab,y_tab
 # %%
+
 colors = ('r', 'g', 'b','y')
 import itertools
-for i in range(n_bb):
+for i in range(nbb):
     if "L5" in names5[i]: 
             cc=colors[0]
     if "R5" in names5[i]: 
@@ -122,8 +133,10 @@ for i in range(n_bb):
 plt.ticklabel_format(style='sci', axis='both', scilimits=(-2,-2))
 plt.grid()
 plt.axis('square')     
+plt.show()
+
 # %%
-for i in range(n_bb):
+for i in range(nbb):
     if "L5" in names1[i]: 
             cc=colors[0]
     if "R5" in names1[i]: 
@@ -141,6 +154,9 @@ for i in range(n_bb):
 plt.ticklabel_format(style='sci', axis='both', scilimits=(-2,-2))
 plt.grid()
 plt.axis('square') 
+plt.show()
+print(names1)
+print(names5)
 
     
 # %%
@@ -193,3 +209,5 @@ plt.axis('square')
 # %%
 
 plt.show()
+
+# %%
