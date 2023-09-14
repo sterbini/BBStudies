@@ -4,7 +4,7 @@ import sys
 sys.path.append('../')
 
 import xtrack as xt
-import BBStudies.Physics.Detuning_code as dtune
+import BBStudies.Physics.Oldies_of_Dobrin.Detuning_code as dtune
 import BBStudies.Physics.Base as phys
 import BBStudies.Plotting.BBPlots as bbplt
 import BBStudies.Physics.Constants as cst
@@ -60,7 +60,7 @@ import scipy.stats as sciStat
 import sys
 
 sys.path.append('../')
-import BBStudies.Physics.Detuning_code as dtune
+import BBStudies.Physics.Oldies_of_Dobrin.Detuning_code as dtune
 import BBStudies.Physics.Base as phys
 import BBStudies.Physics.Constants as cst
 import BBStudies.Plotting.BBPlots as bbplt

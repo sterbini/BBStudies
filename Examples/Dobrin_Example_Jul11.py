@@ -228,7 +228,7 @@ dtune.DQx_DQy(  ax     = [coordinates['x_sig'].values[1]],
 
 # %%
 gflag=0
-import BBStudies.Physics.Detuning_code as dtune_code
+import BBStudies.Physics.Oldies_of_Dobrin.Detuning_code as dtune_code
 
 #gflag=0
 #ax1,ay1,dx1,dy1,r1=[1],[1],1,1,1
