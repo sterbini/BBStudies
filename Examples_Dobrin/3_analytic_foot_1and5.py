@@ -31,7 +31,7 @@ plt.axis('square')
 
 UseModel='BBLR'
 UseModel='IW'
-#UseModel='OCT'
+UseModel='OCT'
 
 if UseModel=='BBLR':
     def USEX(ax,ay,dx,dy,r):  return  dtune.DQX(ax,ay,dx,dy,r)
@@ -44,6 +44,10 @@ if UseModel=='OCT':
     def USEY(ax,ay,dx,dy,r):  return  dtune.DQYOC(ax,ay,dx,dy,r)
     
 # %%
+#Flag psi_bb_as_wire serves to turn on the BBLR-as-IW approximation depending on 
+# the psi parameter (inverted distance to the strong beam core)
+# Set this flag to a huge value to ignore. 
+
 psi_bb_as_wire=1.e100
 
 MyDataDir='../Examples_Dobrin/mydata/'

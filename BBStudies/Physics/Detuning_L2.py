@@ -7,11 +7,6 @@ Compute Fourier Coefficient Dmk, and   tune-shifts DQX,Y
 for a long-range collision (BBLR),  or an ideal wire.
 All functions expect a single value for all parameters.
 """
-gflag=0
-def set_global(g):
-         global gflag
-         gflag=g
-
 def g(t,r):
          return sqrt(1+(r**2-1)*t)
 
