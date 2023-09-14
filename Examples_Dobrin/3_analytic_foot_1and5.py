@@ -85,21 +85,7 @@ for ipcase in ['ip1','ip5']:
                  resy=B**2*dtune.DQYW(A*ax,B*ay,dx,dy,r)            
              else:
                  resx=A**2*USEX(A*ax,B*ay,dx,dy,r)
-                 resy=B**2*USEY(A*ax,B*ay,dx,dy,r)
-
-#             resx=A**2*USEX(A*ax,B*ay,dx,dy,r)
-#             resy=B**2*USEY(A*ax,B*ay,dx,dy,r)
-#             resxIW=A**2*dtune.DQXW(A*ax,B*ay,dx,dy,r)
-#             resyIW=B**2*dtune.DQYW(A*ax,B*ay,dx,dy,r)
-#             errx_BBasIW=np.abs((resxIW-resx)/resx)
-#             erry_BBasIW=np.abs((resyIW-resy)/resy)
-#             #must be 2 for 10
-#             if errx_BBasIW > 0.001  and psix_test > 10 and ax >2:
-#                 print(f'large psi but NOT as IW  |psix|=, {psix_test:.3f} ')
-#                 print(f'                                          |psiz|=, {psiz_test:.3f} ')
-#                 print(ax,ay)
-#                 print(f'errx =, {  errx_BBasIW :.3e} ')
-#                 print(f'erry =, {  erry_BBasIW :.3e} ')
+                 resy=B**2*USEY(A*ax,B*ay,dx,dy,r
 
              x_tab[i,j]=resx
              y_tab[i,j]=resy
