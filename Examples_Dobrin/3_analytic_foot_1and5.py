@@ -30,8 +30,8 @@ plt.axis('square')
 # it defines the dtune function USEX,Y to be used
 
 UseModel='BBLR'
-UseModel='IW'
-UseModel='OCT'
+#UseModel='IW'
+#UseModel='OCT'
 
 if UseModel=='BBLR':
     def USEX(ax,ay,dx,dy,r):  return  dtune.DQX(ax,ay,dx,dy,r)
