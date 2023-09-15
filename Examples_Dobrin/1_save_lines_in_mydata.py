@@ -4,7 +4,6 @@ import sys
 sys.path.append('../')
 
 import xtrack as xt
-import BBStudies.Physics.Oldies_of_Dobrin.Detuning_code as dtune
 import BBStudies.Physics.Base as phys
 import BBStudies.Plotting.BBPlots as bbplt
 import BBStudies.Physics.Constants as cst
@@ -23,8 +22,11 @@ twiss  = {}
 survey = {}
 
 # saving IR1, IR5 lines in mydata/  
+# Head-on 'ho' saved separately  if hoflag=True
 ipcase='ip1'
 #ipcase='ip5'
+hoflag=False
+#hoflag=True
 
 #collider.vars['vrf400'] = 12.0
 #collider.vars['lagrf400.b1'] = 0.5
@@ -57,13 +59,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import scipy.stats as sciStat
-import sys
+#import sys
 
-sys.path.append('../')
-import BBStudies.Physics.Oldies_of_Dobrin.Detuning_code as dtune
-import BBStudies.Physics.Base as phys
-import BBStudies.Physics.Constants as cst
-import BBStudies.Plotting.BBPlots as bbplt
+##sys.path.append('../')
+##import BBStudies.Physics.Detuning_L2 as dtune
+##import BBStudies.Physics.Base as phys
+##import BBStudies.Physics.Constants as cst
+#import BBStudies.Plotting.BBPlots as bbplt
 
 
 coordinates = phys.polar_grid(  r_sig     = np.linspace(1,6.5,5),
@@ -82,40 +84,30 @@ plt.axis('square')
 # %%
 twiss_filtered = {}
 survey_filtered = {}
-#my_filter_string = 'bb_(ho|lr)\.(r|l|c)1.*'
-#my_filter_string = 'bb_(lr)\.(r|l|c)1.*'
-#my_filter_string = 'bb_(lr)\.(r|l|c)1.*'
-
-#dobrin choose only slot #12
-#my_filter_string = 'bb_(lr)\.(r|l|c)(1|5).*_12'
-
-#dobrin choose only 
-#my_filter_string = 'bb_(lr)\.(r|l|c)1.*'
+data_name=ipcase
 
 
 if ipcase == 'ip1':
-	my_filter_string = 'bb_(lr)\.(r|l|c)1.*'	
-elif ipcase == 'ip5':
-	my_filter_string = 'bb_(lr)\.(r|l|c)5.*'
-
-#dobrin choose only slot outside #.. 
-#my_filter_string = 'bb_(lr)\.(r|l|c)1.*12'
-#dobrin all 100
-#my_filter_string = 'bb_(lr)\.(r|l|c)(1|5).*'
-
-
+    if not(hoflag):
+    	my_filter_string = 'bb_(lr)\.(r|l|c)1.*'
+    else:
+        my_filter_string = 'bb_(ho)\.(r|l|c)1.*'
+if ipcase == 'ip5':
+    if not(hoflag):
+    	my_filter_string = 'bb_(lr)\.(r|l|c)5.*'
+    else:
+        my_filter_string = 'bb_(ho)\.(r|l|c)5.*'
+                
+print(my_filter_string)
+if hoflag:
+    data_name=ipcase+'ho'
+ 
+ # %%
 for beam in ['b1','b2']:
     twiss_filtered[beam]  = twiss[beam][:, my_filter_string]
     survey_filtered[beam]  = survey[beam][['X','Y','Z'], my_filter_string]
 names=twiss_filtered['b1']['name']
-"""
-n=len(list(names1))
-names=names1
-for i in range(n):
-    names[i]=names1[i][5:8]+names1[i][10:]
-    names[i]=names1[i].upper()
-"""
-  
+print(names)
  
 # %%
 from scipy import constants
@@ -142,7 +134,7 @@ emittance_weak_y = emittance_weak_ny/gamma_rel/beta_rel
 
 ax = coordinates['x_sig']
 ay = coordinates['y_sig']
-
+# dob can test w/o survey
 s = survey_filtered[beam_strong]['Z']
 d_x_weak_strong_in_meter = (
     twiss_filtered[beam_weak]['x'] - twiss_filtered[beam_strong]['x'] 
@@ -205,10 +197,13 @@ plt.xticks(fontsize=11,fontweight = 'bold',rotation = 90)
 
 # %%
 MyDataDir='../Examples_Dobrin/mydata/'
-np.savetxt(MyDataDir+'names_'+ipcase+".dat",np.array(names), fmt='%s')
+#no survey for test
+#MyDataDir='../Examples_Dobrin/mydata_NOS/'
+
+np.savetxt(MyDataDir+'names_'+data_name+".dat",np.array(names), fmt='%s')
 
 tmp=np.array([s,dx_sig,dy_sig,r,A_w_s,B_w_s]) 
 tmp=np.transpose(tmp)
-np.savetxt(MyDataDir+'data_'+ipcase+".dat",tmp, fmt='%14.10f')
+np.savetxt(MyDataDir+'data_'+data_name+".dat",tmp, fmt='%14.10f')
 
 # %%

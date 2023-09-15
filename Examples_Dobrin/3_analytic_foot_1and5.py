@@ -15,7 +15,7 @@ import time
 
 
 # %%
-coordinates = phys.polar_grid(  r_sig     = np.linspace(1,6.5,5),
+coordinates = phys.polar_grid(  r_sig     = np.linspace(0.1,6.5,5),
                                 theta_sig = np.linspace(0.05*np.pi/2,0.95*np.pi/2,6),
                                 emitt     = [2.5e-6/7000,2.5e-6/7000])
 
@@ -30,8 +30,8 @@ plt.axis('square')
 # it defines the dtune function USEX,Y to be used
 
 UseModel='BBLR'
-UseModel='IW'
-UseModel='OCT'
+#UseModel='IW'
+#UseModel='OCT'
 
 if UseModel=='BBLR':
     def USEX(ax,ay,dx,dy,r):  return  dtune.DQX(ax,ay,dx,dy,r)
@@ -51,23 +51,31 @@ if UseModel=='OCT':
 psi_bb_as_wire=1.e100
 
 MyDataDir='../Examples_Dobrin/mydata/'
+#MyDataDir='../Examples_Dobrin/mydata_NOS/'
 i_bb=0
 
-for ipcase in ['ip1','ip5']:
+#for ipcase in ['ip1','ip5']:
+for ipcase in ['ip1ho','ip5ho']:
+    
+    
+    
+    
+    
     params = np.loadtxt(MyDataDir+'data_'+ipcase+'.dat')
-#    params = np.loadtxt(MyDataDir+'data_'+ipcase+'_NOS.dat')
-
+ 
     params = np.array(params)
     with open(MyDataDir+'names_'+ipcase+'.dat') as f:
    	    names = f.readlines()
     nbb=len(names)
-    n_bb=nbb
+    split_factor=1
+    if 'ho' in ipcase:
+          split_factor=1/nbb
     for i in range(nbb):
         names[i]=names[i][6:8]+names[i][10:13]
         names[i]=names[i].upper()
         
-    x_tab = [[0 for col in range(n_amp)] for row in range(nbb)]
-    y_tab = [[0 for col in range(n_amp)] for row in range(nbb)]
+    x_tab = [[0 for jj in range(n_amp)] for ii in range(nbb)]
+    y_tab = [[0 for jj in range(n_amp)] for ii in range(nbb)]
     x_tab=np.array(x_tab,dtype=np.float64)
     y_tab=np.array(y_tab,dtype=np.float64)
     
@@ -92,14 +100,14 @@ for ipcase in ['ip1','ip5']:
                  resy=B**2*USEY(A*ax,B*ay,dx,dy,r)
 
 
-             x_tab[i,j]=resx
-             y_tab[i,j]=resy
+             x_tab[i,j]=split_factor*resx
+             y_tab[i,j]=split_factor*resy
 
-#             print(ax,ay,x_tab[i,j],y_tab[i,j])
+             #print(ax,ay,x_tab[i,j],y_tab[i,j])
 
          e_time = time.time()
          print(f'Execution time, {(e_time-s_time):.3f} s')
-    if(ipcase=='ip1'):
+    if('ip1' in ipcase):
         names1,x_tab1,y_tab1=names,x_tab,y_tab
     else:
         names5,x_tab5,y_tab5=names,x_tab,y_tab
@@ -138,7 +146,7 @@ for i in range(nbb):
             cc=colors[3]   
     x_individ1=x_tab1[i,:]
     y_individ1=y_tab1[i,:]
-    plt.plot(x_individ1, y_individ1, ls="-", lw=1, 
+    plt.plot(x_individ1, y_individ1, ls=" ", lw=1, 
      marker='o',markersize=3 ,color=cc
       
       )
