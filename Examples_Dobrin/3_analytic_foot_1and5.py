@@ -56,9 +56,7 @@ i_bb=0
 
 #for ipcase in ['ip1','ip5']:
 for ipcase in ['ip1ho','ip5ho']:
-    
-    
-    
+#for ipcase in ['ip1ho','ip5ho', 'ip1','ip5']:
     
     
     params = np.loadtxt(MyDataDir+'data_'+ipcase+'.dat')
@@ -70,6 +68,7 @@ for ipcase in ['ip1ho','ip5ho']:
     split_factor=1
     if 'ho' in ipcase:
           split_factor=1/nbb
+          UseModel='BBLR'
     for i in range(nbb):
         names[i]=names[i][6:8]+names[i][10:13]
         names[i]=names[i].upper()
@@ -194,19 +193,16 @@ plt.grid()
 plt.legend()
 plt.axis('square') 
 
+
 # %%
-plt.plot(
-    sumx1+sumx5, sumy1+sumy5, 
-    ls="-",marker="x",label='ip1+ip5'
-    )
-plt.title('UseModel='+str(UseModel))
+plt.plot(sumx1, sumy1,ls="-",marker="x",label='ip1')
+plt.plot(sumx5, sumy5,ls="-",marker="x",label='ip5')
+plt.plot(sumx1+sumx5, sumy1+sumy5,ls="-",marker="x",label='ip1+ip5' )
 plt.xlabel('DQx [$ xi $]')
-plt.ylabel('DQy [$ xi $]')
+plt.ylabel('DQy [$ xi $]') 
 plt.grid()
 plt.legend()
-plt.axis('square') 
-# %%
-
-plt.show()
-
+plt.axis('square')
+plt.title(' Model used is '+str(UseModel))
+ 
 # %%
