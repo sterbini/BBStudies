@@ -62,7 +62,7 @@ def TYL( axb,ayb, dxb,dyb):
 
 # BBLR-model tune shift replaced with IW model for large psix
 ERR=1.e-5
-ERR=1.e-8
+#ERR=1.e-8
 
 def DQX(ax,ay,dx,dy,r):    
     psix=dx/ax/r

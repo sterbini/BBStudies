@@ -3,7 +3,7 @@ import numpy as np
 import sys
 sys.path.append('../')
 import BBStudies.Physics.Base as phys
-# memo: here with 2D Bessel L2 (the I2 was Detuning_as_paper.py)
+# memo: here with 2D Bessel L2 rather than I2
 import BBStudies.Physics.Detuning_L2 as dtune
 
 
@@ -31,7 +31,7 @@ plt.axis('square')
 
 UseModel='BBLR'
 #UseModel='IW'
-UseModel='OCT'
+#UseModel='OCT'
 
 if UseModel=='BBLR':
     def USEX(ax,ay,dx,dy,r):  return  dtune.DQX(ax,ay,dx,dy,r)
@@ -43,7 +43,7 @@ if UseModel=='OCT':
     def USEX(ax,ay,dx,dy,r):  return  dtune.DQXOC(ax,ay,dx,dy,r)
     def USEY(ax,ay,dx,dy,r):  return  dtune.DQYOC(ax,ay,dx,dy,r)
     
-# Looping
+# Explicit  Loop over amplitudes ax,ay is here included  
 
 #Flag psi_bb_as_wire serves to turn on the BBLR-as-IW approximation depending on 
 # the psi parameter (inverted distance to the strong beam core)
