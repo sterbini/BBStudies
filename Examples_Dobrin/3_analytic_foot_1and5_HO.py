@@ -30,7 +30,7 @@ plt.axis('square')
 # it defines the dtune function USEX,Y to be used
 
 UseModel='BBLR'
-#UseModel='IW'
+UseModel='IW'
 #UseModel='OCT'
 
 if UseModel=='BBLR':
@@ -182,7 +182,7 @@ plt.title(' Model used is '+str(UseModel))
 
 
 # %%
-#sumx1, sumy1=plot_indiv(names1,colors[1],x_tab1,y_tab1)
+sumx1, sumy1=plot_indiv(names1,colors[1],x_tab1,y_tab1)
 
 # %%
 #sumx5, sumy5=plot_indiv(names5,colors[0],x_tab5,y_tab5)
