@@ -56,14 +56,13 @@ import BBStudies.Physics.Base as phys
 import BBStudies.Physics.Constants as cst
 import BBStudies.Plotting.BBPlots as bbplt
 
-
-coordinates = phys.polar_grid(  r_sig     = np.linspace(1,6.5,5),
-                                theta_sig = np.linspace(0.05*np.pi/2,0.95*np.pi/2,5),
+# Here a_min = 1 so that ERR=1.e-5 in Detuning_L2 is accurate enough
+# very small amplitudes min_a << 1 may require betterintegration accuracy 
+a_min=1
+coordinates = phys.polar_grid(  r_sig     = np.linspace(a_min,6.5,5),
+                                theta_sig = np.linspace(0.05*np.pi/2,0.95*np.pi/2,6),
                                 emitt     = [2.5e-6/7000,2.5e-6/7000])
 
-
-# %%
-twiss_filtered = {}
 survey_filtered = {}
 
 my_filter_string = 'bb_(ho|lr)\.(r|l|c)1.*'
@@ -161,19 +160,7 @@ plt.title('Filtering by '+my_filter_string)
 #plt.plot(s, B_w_s,'o')
 #plt.xlabel('s [m]') 
 #plt.ylabel('B_w_s')
-#plt.title('Filtering by '+my_filter_string)
-
-# %%
-""""
-DQx_HO,DQy_HO = dtune.DQx_DQy(ax, 
-              ay, 0, 
-                      0, 
-                      1,  
-                      1,  
-                      1,  
-                      xi=1e-2, 
-                      fw=1)
-"""
+#plt.title('Filtering by '+my_filter_string
 # %%
 # import time
 # import BBStudies.Physics.Constants as cst
@@ -257,6 +244,7 @@ def myDQx_DQy(bb_name,  r,
                                 fw=1   ))}
 
 #myDQx_DQy(name_weak[0],r[0],dx_sig[0],dy_sig[0],A_w_s[0],B_w_s[0],xi_list[0])
+# test single bb
 it=3
 
 result1=myDQx_DQy(name_weak[it],r[it],dx_sig[it],dy_sig[it],A_w_s[it],B_w_s[it],xi_list[it])
@@ -297,18 +285,15 @@ with Pool(64) as pool:
                                         xi_list))
 
 # %%  # former BUG
-"""
-dtune.DQx_DQy(  ax     = [coordinates['x_sig'].values[1]],
-                                ay     = [coordinates['y_sig'].values[1]],
-                                r      = r[0],
-                                dx_sig = dx_sig[0],
-                                dy_sig = dy_sig[0],
-                                A_w_s  = A_w_s[0],
-                                B_w_s  = B_w_s[0],
-                                xi     = xi_list[0])
-
-
-"""
+#
+#dtune.DQx_DQy(  ax     = [coordinates['x_sig'].values[1]],
+#                                ay     = [coordinates['y_sig'].values[1]],
+#                                r      = r[0],
+#                                dx_sig = dx_sig[0],
+#                                dy_sig = dy_sig[0],
+#                                A_w_s  = A_w_s[0],
+#                                B_w_s  = B_w_s[0],
+#                                xi     = xi_list[0])
 # %%
 
 # convert a list of dict in a dict
@@ -319,6 +304,7 @@ for my_dict in result:
         dict_result[key] = my_dict[key]
 
 # define a function that takes a np.array and replace nan with 0
+"""
 def nan_to_zero(my_array):
     my_array[np.isnan(my_array)] = 0
     return my_array
@@ -329,19 +315,29 @@ for my_bb in dict_result.keys():
     print(my_bb)
     DQx_HO+=nan_to_zero(dict_result[my_bb][0])
     DQy_HO+=nan_to_zero(dict_result[my_bb][1])
+"""
+
 
 # %%
+
+DQx_all= 0
+DQy_all = 0
+for my_bb in dict_result.keys():
+    print(my_bb)
+    DQx_all+=dict_result[my_bb][0]
+    DQy_all+=dict_result[my_bb][1]
 
 
 
 Qx_0,Qy_0 = 0.31, 0.32
 
-fp_x = Qx_0 + DQx_HO
-fp_y = Qy_0 + DQy_HO
+fp_x = 0*Qx_0 + DQx_all
+fp_y = 0*Qy_0 + DQy_all
  
 # %%
-plt.plot(fp_x,fp_y,'--xr')
-
+ksi=xi_list[0]
+plt.plot(fp_x/ksi,fp_y/ksi,'--xr')
+plt.grid()
 plt.axis('square')
 
 
