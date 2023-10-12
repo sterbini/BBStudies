@@ -1,13 +1,12 @@
 # %%
 import numpy as np
 import sys
-sys.path.append('../')
-
 import xtrack as xt
+
+sys.path.append('../')
 import BBStudies.Physics.Base as phys
 import BBStudies.Plotting.BBPlots as bbplt
 import BBStudies.Physics.Constants as cst
-
 
 # %%
 my_json = ('../BBStudies/Run3_configuration/'
@@ -37,7 +36,6 @@ for seq in ['lhcb1','lhcb2']:
     _beam = seq[-2:]
     
     # Importing Line
-     
     # tracker -> twiss + survey
     #  notice that survey is defined wrt element0
     

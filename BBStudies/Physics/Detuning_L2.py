@@ -177,3 +177,27 @@ def DQX0(dx,dy,r):
 
 def DQY0(dx,dy,r):
          return -2/dx**2
+
+#===================================================
+#    Tune Shift  
+#===================================================
+def DQx_DQy(ax,ay,dx_sig,dy_sig,A_w_s,B_w_s,r,xi):
+    """
+    Notes: 
+    The function expects an array for ax,ay, and a single value for the other parameters
+    --------
+    ax,ay         -> normalized amplitude, ax = x/sigma_weak
+    r             -> sigma_y/sigma_x
+    dx_sig,dy_sig -> normalized bb separation, dx_sig = dx/sigma_strong
+    xi            -> beam-beam parameter
+    A_w_s         -> sigma_w_x/sigma_s_y
+    B_w_s         -> sigma_w_y/sigma_s_x
+    fw            -> reduction factor, sig_x,y -> sig_x,y/fw
+    """
+    ax = np.array(ax)
+    ay = np.array(ay)
+
+    DQx = xi*A_w_s**2*np.array([DQX(_ax*(A_w_s),_ay*(B_w_s),dx_sig,dy_sig,r) for _ax,_ay in zip(ax,ay)])
+    DQy = xi*B_w_s**2*np.array([DQY(_ax*(A_w_s),_ay*(B_w_s),dx_sig,dy_sig,r) for _ax,_ay in zip(ax,ay)])
+    return DQx,DQy
+#================================================================================

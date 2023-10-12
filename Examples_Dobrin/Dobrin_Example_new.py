@@ -5,6 +5,7 @@ import xtrack as xt
 
 sys.path.append('../')
 import BBStudies.Physics.Detuning as dtune
+
 import BBStudies.Physics.Base as phys
 import BBStudies.Plotting.BBPlots as bbplt
 import BBStudies.Physics.Constants as cst
@@ -67,6 +68,8 @@ survey_filtered = {}
 
 my_filter_string = 'bb_(ho|lr)\.(r|l|c)1.*'
 #Xmy_filter_string = 'bb_(ho)\.(r|l|c)1.*'
+
+#my_filter_string = 'bb_(lr)\.(r|l|c)(1|5).*25'
 
 for beam in ['b1','b2']:
     twiss_filtered[beam]  = twiss[beam][:, my_filter_string]
@@ -144,52 +147,24 @@ plt.plot(s, np.abs(dy_sig),'o')
 plt.xlabel('s [m]') 
 plt.ylabel('distance in y [$\sigma$ of the strong beam]')
 plt.title('Filtering by '+my_filter_string)
+## %%
+#plt.plot(s, r,'o')
+#plt.xlabel('s [m]') 
+#plt.ylabel('r')
+#plt.title('Filtering by '+my_filter_string)
 # %%
-plt.plot(s, r,'o')
-plt.xlabel('s [m]') 
-plt.ylabel('r')
-plt.title('Filtering by '+my_filter_string)
+#plt.plot(s, A_w_s,'o')
+#plt.xlabel('s [m]') 
+#plt.ylabel('A_w_s')
+#plt.title('Filtering by '+my_filter_string)
 # %%
-plt.plot(s, A_w_s,'o')
-plt.xlabel('s [m]') 
-plt.ylabel('A_w_s')
-plt.title('Filtering by '+my_filter_string)
-# %%
-plt.plot(s, B_w_s,'o')
-plt.xlabel('s [m]') 
-plt.ylabel('B_w_s')
-plt.title('Filtering by '+my_filter_string)
+#plt.plot(s, B_w_s,'o')
+#plt.xlabel('s [m]') 
+#plt.ylabel('B_w_s')
+#plt.title('Filtering by '+my_filter_string)
 
 # %%
-index_bb = 5
-dtune.DQx_DQy([0.000001], 
-              [0.000001], dx_sig[index_bb], 
-                      dy_sig[index_bb], 
-                      A_w_s[index_bb],  
-                      B_w_s[index_bb],  
-                      r[index_bb],  
-                      xi=1, 
-                      fw=1)
-
-dtune.DQx_DQy([0.05], 
-              [0.05], 0, 
-                      0, 
-                      1,  
-                      1,  
-                      1,  
-                      xi=1, 
-                      fw=1)
-# %%
-dtune.DQx_DQy(ax, 
-              ay, 0, 
-                      0, 
-                      1,  
-                      1,  
-                      1,  
-                      xi=1, 
-                      fw=1)
-
-# %%
+""""
 DQx_HO,DQy_HO = dtune.DQx_DQy(ax, 
               ay, 0, 
                       0, 
@@ -198,13 +173,13 @@ DQx_HO,DQy_HO = dtune.DQx_DQy(ax,
                       1,  
                       xi=1e-2, 
                       fw=1)
+"""
 # %%
-
 # import time
 # import BBStudies.Physics.Constants as cst
 
 # # Initialize tuneshift
-# DQx_HO,DQy_HO = np.zeros(len(coordinates)),np.zeros(len(coordinates))
+# DQx_HO,DQy_HO = np.zeros(len(ax)),np.zeros(len(ax))
 
 
 
@@ -238,28 +213,12 @@ DQx_HO,DQy_HO = dtune.DQx_DQy(ax,
 # # Close-up and zoomed out plot
 # #====================================================
 Qx_0,Qy_0 = 0.31, 0.32
-fp_x = Qx_0 + DQx_HO
-fp_y = Qy_0 + DQy_HO
+#fp_x = Qx_0 + DQx_HO
+#fp_y = Qy_0 + DQy_HO
+#plt.plot(fp_x,fp_y,'o') 
 
-for window in [0.01,0.05]:
-
-    Qx_lim    = [Qx_0-3*window/4,Qx_0+window/4]
-    Qy_lim    = [Qy_0-3*window/4,Qy_0+window/4]
-
-    plt.figure(figsize=(6,6))
-    bbplt.workingDiagram(order=12,Qx_range=Qx_lim,Qy_range = Qy_lim,alpha=0.15)
-
-    bbplt.polarmesh(fp_x,fp_y,alpha=0.1,r=coordinates['r_sig'],theta=coordinates['theta_sig'],color='darkslateblue')
-    plt.scatter(fp_x,fp_y,s = 30*sciStat.norm.pdf(coordinates['r_sig'])/sciStat.norm.pdf(0),zorder=10)
-    plt.plot(Qx_0,Qy_0,'P',color='C3',alpha=0.8,label='Unperturbed')
-
-    plt.legend(loc='upper right')
-    plt.axis('square')
-    plt.xlim(Qx_lim)
-    plt.ylim(Qy_lim)
-    plt.tight_layout()
 # #====================================================
-
+ 
 # %%
 from multiprocessing import Pool
 
@@ -289,17 +248,47 @@ def myDQx_DQy(bb_name,  r,
                 xi ):
     return {bb_name: (dtune.DQx_DQy(coordinates['x_sig'],
                                     coordinates['y_sig'],
-                                dx_sig, # = dx_sig[my_index],
-                                dy_sig, # = dy_sig[my_index],
-                                A_w_s , # = A_w_s[my_index],
-                                B_w_s , # = B_w_s[my_index],
-                                r     , #= r[my_index],
+                                dx_sig,
+                                dy_sig,
+                                A_w_s ,
+                                B_w_s ,
+                                r     ,
                                 xi,
-                                fw=1   ))}# = xi_list[my_index])
+                                fw=1   ))}
 
-# myDQx_DQy(name_weak[0],r[0],dx_sig[0],dy_sig[0],A_w_s[0],B_w_s[0],xi_list[0])
+#myDQx_DQy(name_weak[0],r[0],dx_sig[0],dy_sig[0],A_w_s[0],B_w_s[0],xi_list[0])
+it=3
+
+result1=myDQx_DQy(name_weak[it],r[it],dx_sig[it],dy_sig[it],A_w_s[it],B_w_s[it],xi_list[it])
+key_name,=result1
+# %%
+import BBStudies.Physics.Detuning_L2 as dtuneL2
+#UseModel='IW'
+def DQx_DQy_dob(bb_name,  r,
+                dx_sig, 
+                dy_sig, 
+                A_w_s, 
+                B_w_s,
+                xi):
+   return {bb_name:  (dtuneL2.DQx_DQy(coordinates['x_sig'],
+                                     coordinates['y_sig'],
+                                dx_sig,
+                                dy_sig,
+                                A_w_s ,
+                                B_w_s ,
+                                r     ,
+                                xi ))}    
+    
+result_no_nan=DQx_DQy_dob(name_weak[it],r[it],dx_sig[it],dy_sig[it],A_w_s[it],B_w_s[it],xi_list[it])
+
+ 
+# %%
+print(" compare the two functions DQx_DQy -- old and new \n is this zero? \n ",(result1[key_name][0]-result_no_nan[key_name][0]))
+
+
+# %%
 with Pool(64) as pool:
-    result = pool.starmap(myDQx_DQy, zip(name_weak, 
+    result = pool.starmap(DQx_DQy_dob, zip(name_weak, 
                                         r, 
                                         dx_sig, 
                                         dy_sig, 
@@ -307,7 +296,8 @@ with Pool(64) as pool:
                                         B_w_s, 
                                         xi_list))
 
-# %% BUG
+# %%  # former BUG
+"""
 dtune.DQx_DQy(  ax     = [coordinates['x_sig'].values[1]],
                                 ay     = [coordinates['y_sig'].values[1]],
                                 r      = r[0],
@@ -317,14 +307,16 @@ dtune.DQx_DQy(  ax     = [coordinates['x_sig'].values[1]],
                                 B_w_s  = B_w_s[0],
                                 xi     = xi_list[0])
 
+
+"""
 # %%
+
 # convert a list of dict in a dict
 dict_result = {}
 
 for my_dict in result:
     for key in my_dict:
         dict_result[key] = my_dict[key]
-# %%
 
 # define a function that takes a np.array and replace nan with 0
 def nan_to_zero(my_array):
@@ -346,25 +338,11 @@ Qx_0,Qy_0 = 0.31, 0.32
 
 fp_x = Qx_0 + DQx_HO
 fp_y = Qy_0 + DQy_HO
-
-for window in [0.01,0.05]:
-
-    Qx_lim    = [Qx_0-3*window/4,Qx_0+window/4]
-    Qy_lim    = [Qy_0-3*window/4,Qy_0+window/4]
-
-    plt.figure(figsize=(6,6))
-    bbplt.workingDiagram(order=12,Qx_range=Qx_lim,Qy_range = Qy_lim,alpha=0.15)
-
-    bbplt.polarmesh(fp_x,fp_y,alpha=0.1,r=coordinates['r_sig'],theta=coordinates['theta_sig'],color='darkslateblue')
-    plt.scatter(fp_x,fp_y,s = 30*sciStat.norm.pdf(coordinates['r_sig'])/sciStat.norm.pdf(0),zorder=10)
-    plt.plot(Qx_0,Qy_0,'P',color='C3',alpha=0.8,label='Unperturbed')
-
-    plt.legend(loc='upper right')
-    plt.axis('square')
-    plt.xlim(Qx_lim)
-    plt.ylim(Qy_lim)
-    plt.tight_layout()
+ 
 # %%
-plt.plot(fp_x,fp_y,'o')
+plt.plot(fp_x,fp_y,'--xr')
+
+plt.axis('square')
+
 
 # %%

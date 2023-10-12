@@ -99,7 +99,7 @@ my_filter_string = 'bb_(lr)\.(r|l|c)(1|5).*_12'
 
 #dobrin choose only slot #12 5
 my_filter_string = 'bb_(lr)\.(r|l|c)1.*12'
-my_filter_string = 'bb_(lr)\.(r|l|c)1.*'
+#my_filter_string = 'bb_(lr)\.(r|l|c)1.*'
 
 #dobrin choose only slot outside #.. 
 #my_filter_string = 'bb_(lr)\.(r|l|c)1.*22'
