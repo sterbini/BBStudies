@@ -15,7 +15,10 @@ import time
 
 
 # %%
-coordinates = phys.polar_grid(  r_sig     = np.linspace(0.1,6.5,5),
+# Here a_min = 1 so that ERR=1.e-5 in Detuning_L2 is accurate enough
+# very small amplitudes min_a << 1 may require betterintegration accuracy 
+a_min=1
+coordinates = phys.polar_grid(  r_sig     = np.linspace(a_min,6.5,5),
                                 theta_sig = np.linspace(0.05*np.pi/2,0.95*np.pi/2,6),
                                 emitt     = [2.5e-6/7000,2.5e-6/7000])
 
@@ -30,7 +33,7 @@ plt.axis('square')
 # it defines the dtune function USEX,Y to be used
 
 UseModel='BBLR'
-UseModel='IW'
+#UseModel='IW'
 #UseModel='OCT'
 
 if UseModel=='BBLR':
@@ -57,9 +60,10 @@ MyDataDir='../Examples_Dobrin/mydata/'
 #MyDataDir='../Examples_Dobrin/mydata_NOS/'
 i_bb=0
 
+# put ho at the end of the list 
 #for ipcase in ['ip1','ip5']:
-#for ipcase in ['ip1ho','ip5ho']:
-for ipcase in [ 'ip1','ip5','ip1ho','ip5ho']:
+for ipcase in ['ip1','ip1ho']:
+#for ipcase in [ 'ip1','ip5','ip1ho','ip5ho']:
     params = np.loadtxt(MyDataDir+'data_'+ipcase+'.dat')
  
     params = np.array(params)
@@ -156,14 +160,19 @@ def plot_indiv(names,ccc,xtab,ytab):
 ##########
 colors = (('r', 'g'), ('b','yellow'))
 
-sumx5, sumy5=plot_indiv(names5,colors[0],x_tab5,y_tab5)
+#sumx5, sumy5=plot_indiv(names5,colors[0],x_tab5,y_tab5)
 sumx1, sumy1=plot_indiv(names1,colors[1],x_tab1,y_tab1)
 sumx1ho, sumy1ho=plot_indiv(names1ho,colors[1],x_tab1ho,y_tab1ho)
-sumx5ho, sumy5ho=plot_indiv(names5ho,colors[0],x_tab5ho,y_tab5ho)
+#sumx5ho, sumy5ho=plot_indiv(names5ho,colors[0],x_tab5ho,y_tab5ho)
 plt.xlabel('DQx [$ xi $]')
 plt.ylabel('DQy [$ xi $]') 
 plt.grid()
 plt.legend()
+plt.axis('square')
+# %%
+plt.plot(sumx1+sumx1ho, sumy1+sumy1ho,
+        label='ip1+ip5', markersize=4,color='black' )
+plt.grid()
 plt.axis('square')
 
 # %%
