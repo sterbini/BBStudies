@@ -9,6 +9,7 @@ import BBStudies.Physics.Detuning as dtune
 import BBStudies.Physics.Base as phys
 import BBStudies.Plotting.BBPlots as bbplt
 import BBStudies.Physics.Constants as cst
+import time
 
 # %%
 my_json = ('../BBStudies/Run3_configuration/'
@@ -63,12 +64,14 @@ coordinates = phys.polar_grid(  r_sig     = np.linspace(a_min,6.5,5),
                                 theta_sig = np.linspace(0.05*np.pi/2,0.95*np.pi/2,6),
                                 emitt     = [2.5e-6/7000,2.5e-6/7000])
 
+# %%
+twiss_filtered = {}
 survey_filtered = {}
 
 my_filter_string = 'bb_(ho|lr)\.(r|l|c)1.*'
-#Xmy_filter_string = 'bb_(ho)\.(r|l|c)1.*'
-
+#my_filter_string = 'bb_(ho)\.(r|l|c)1.*'
 #my_filter_string = 'bb_(lr)\.(r|l|c)(1|5).*25'
+
 
 for beam in ['b1','b2']:
     twiss_filtered[beam]  = twiss[beam][:, my_filter_string]
@@ -199,7 +202,7 @@ plt.title('Filtering by '+my_filter_string)
 
 # # Close-up and zoomed out plot
 # #====================================================
-Qx_0,Qy_0 = 0.31, 0.32
+#Qx_0,Qy_0 = 0.31, 0.32
 #fp_x = Qx_0 + DQx_HO
 #fp_y = Qy_0 + DQy_HO
 #plt.plot(fp_x,fp_y,'o') 
@@ -243,11 +246,13 @@ def myDQx_DQy(bb_name,  r,
                                 fw=1   ))}
 
 #myDQx_DQy(name_weak[0],r[0],dx_sig[0],dy_sig[0],A_w_s[0],B_w_s[0],xi_list[0])
+test=False
+if test:    
 # test single bb
-it=3
+    it=3
 
-result1=myDQx_DQy(name_weak[it],r[it],dx_sig[it],dy_sig[it],A_w_s[it],B_w_s[it],xi_list[it])
-key_name,=result1
+    result1=myDQx_DQy(name_weak[it],r[it],dx_sig[it],dy_sig[it],A_w_s[it],B_w_s[it],xi_list[it])
+    key_name,=result1
 # %%
 import BBStudies.Physics.Detuning_L2 as dtuneL2
 #UseModel='IW'
@@ -266,14 +271,16 @@ def DQx_DQy_dob(bb_name,  r,
                                 r     ,
                                 xi ))}    
     
-result_no_nan=DQx_DQy_dob(name_weak[it],r[it],dx_sig[it],dy_sig[it],A_w_s[it],B_w_s[it],xi_list[it])
 
  
 # %%
-print(" compare the two functions DQx_DQy -- old and new \n is this zero? \n ",(result1[key_name][0]-result_no_nan[key_name][0]))
+if test:
+    result_no_nan=DQx_DQy_dob(name_weak[it],r[it],dx_sig[it],dy_sig[it],A_w_s[it],B_w_s[it],xi_list[it])
+    print(" compare the two functions DQx_DQy -- old and new \n is this zero? \n ",(result1[key_name][0]-result_no_nan[key_name][0]))
 
 
 # %%
+s_time = time.time()
 with Pool(64) as pool:
     result = pool.starmap(DQx_DQy_dob, zip(name_weak, 
                                         r, 
@@ -282,8 +289,11 @@ with Pool(64) as pool:
                                         A_w_s, 
                                         B_w_s, 
                                         xi_list))
+e_time = time.time()
+print(f'Execution time, {(e_time-s_time):.3f} s')
+           
 
-# %%  # former BUG
+# %%  # NAN BUG now resolved
 #
 #dtune.DQx_DQy(  ax     = [coordinates['x_sig'].values[1]],
 #                                ay     = [coordinates['y_sig'].values[1]],
@@ -302,7 +312,7 @@ for my_dict in result:
     for key in my_dict:
         dict_result[key] = my_dict[key]
 
-# define a function that takes a np.array and replace nan with 0
+# define a function that takes a np.array and replace nan with 0 -- NOW NOT NEEDED
 """
 def nan_to_zero(my_array):
     my_array[np.isnan(my_array)] = 0
@@ -327,17 +337,36 @@ for my_bb in dict_result.keys():
     DQy_all+=dict_result[my_bb][1]
 
 
-
 Qx_0,Qy_0 = 0.31, 0.32
 
-fp_x = 0*Qx_0 + DQx_all
-fp_y = 0*Qy_0 + DQy_all
+fp_x = Qx_0 + DQx_all
+fp_y = Qy_0 + DQy_all
  
 # %%
 ksi=xi_list[0]
-plt.plot(fp_x/ksi,fp_y/ksi,'--xr')
+plt.plot(fp_x/ksi,fp_y/ksi,'xr')
 plt.grid()
 plt.axis('square')
 
+# %%
+
+for window in [0.01,0.05]:
+
+    Qx_lim    = [Qx_0-3*window/4,Qx_0+window/4]
+    Qy_lim    = [Qy_0-3*window/4,Qy_0+window/4]
+
+    plt.figure(figsize=(6,6))
+    bbplt.workingDiagram(order=12,Qx_range=Qx_lim,Qy_range = Qy_lim,alpha=0.15)
+
+    bbplt.polarmesh(fp_x,fp_y,alpha=0.1,r=coordinates['r_sig'],theta=coordinates['theta_sig'],color='darkslateblue')
+    plt.scatter(fp_x,fp_y,s = 30*sciStat.norm.pdf(coordinates['r_sig'])/sciStat.norm.pdf(0),zorder=10)
+    plt.plot(Qx_0,Qy_0,'P',color='C3',alpha=0.8,label='Unperturbed')
+
+    plt.legend(loc='upper right')
+    plt.axis('square')
+    plt.xlim(Qx_lim)
+    plt.ylim(Qy_lim)
+    plt.tight_layout()
+    plt.title('Filtering by '+my_filter_string)
 
 # %%
