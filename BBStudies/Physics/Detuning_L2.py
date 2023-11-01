@@ -1,7 +1,6 @@
 from numpy import *
 import scipy.integrate as integrate
 import numpy as np
-
 """
 Compute Fourier Coefficient Dmk, and   tune-shifts DQX,Y
 for a long-range collision (BBLR),  or an ideal wire.
@@ -94,15 +93,15 @@ def DQY(ax,ay,dx,dy,r):
                 dyb=xi*psiz/_g(xi)), _i, _f, epsabs=ERR)[0]
 
 # Ideal-wire real-valued FC (when one of dx, dy is zero and k is not zero)
-def DmkW(m_in,k_in,ax,ay,dx,dy,r):   
+def DmkW(m_,k_,ax,ay,dx,dy,r):   
    if abs(dy)<0.001:
-            m=m_in
-            k=k_in
+            m=m_
+            k=k_
             psix=abs(dx/ax/r)
             psiy=ay/ax/r
    else:
-            m=k_in
-            k=m_in
+            m=k_
+            k=m_
             psix=abs(dy/ay*r)
             psiy=ax/ay*r
    def PX(fi): return psix+sin(fi)
@@ -114,15 +113,15 @@ def DmkW(m_in,k_in,ax,ay,dx,dy,r):
    return res
 
 # Ideal-wire real-valued FC (when one of dx, dy is zero and k=0 )
-def DmkWk0(m_in,k_in,ax,ay,dx,dy,r):   
+def DmkWk0(m_,k_,ax,ay,dx,dy,r):   
    if abs(dy)<0.001:
-            m=m_in
-            k=k_in
+            m=m_
+            k=k_
             psix=abs(dx/ax/r)
             psiy=ay/ax/r
    else:
-            m=k_in
-            k=m_in
+            m=k_
+            k=m_
             psix=abs(dy/ay*r)
             psiy=ax/ay*r
    def PX(fiy): return psix+sin(fiy)
@@ -132,7 +131,7 @@ def DmkWk0(m_in,k_in,ax,ay,dx,dy,r):
    res=integrate.quad(kern ,0,2*pi)[0]
    return res
 
-# Ideal wire tune-shifts 
+# Ideal-wire tune-shifts 
 def DQXW(ax,ay,dx,dy,r):
     def PX(fix): return dx+ax*r*sin(fix)
     def PY(fiy): return dy*r+ ay*sin(fiy)
@@ -181,7 +180,7 @@ def DQY0(dx,dy,r):
 #===================================================
 #    Tune Shift  
 #===================================================
-def DQx_DQy(ax,ay,dx_sig,dy_sig,A_w_s,B_w_s,r,xi):
+def DQx_DQy(ax,ay,dx_sig,dy_sig,A_w_s,B_w_s,r,xi,Model):
     """
     Notes: 
     The function expects an array for ax,ay, and a single value for the other parameters
@@ -194,10 +193,22 @@ def DQx_DQy(ax,ay,dx_sig,dy_sig,A_w_s,B_w_s,r,xi):
     B_w_s         -> sigma_w_y/sigma_s_x
     fw            -> reduction factor, sig_x,y -> sig_x,y/fw
     """
+    UseModelX=DQX
+    UseModelY=DQY    
+    is_HO=np.abs(dx_sig*dy_sig) 
+# HO are treated with the BBLR Model
+    if Model=='IW' and is_HO>1: 
+    #   A_w_s,B_w_s=1,1
+        UseModelX=DQXW
+        UseModelY=DQYW
+    elif Model=='OCT' and is_HO>1: 
+    #   A_w_s,B_w_s=1,1
+        UseModelX=DQXOC
+        UseModelY=DQYOC    
+
     ax = np.array(ax)
     ay = np.array(ay)
-
-    DQx = xi*A_w_s**2*np.array([DQX(_ax*(A_w_s),_ay*(B_w_s),dx_sig,dy_sig,r) for _ax,_ay in zip(ax,ay)])
-    DQy = xi*B_w_s**2*np.array([DQY(_ax*(A_w_s),_ay*(B_w_s),dx_sig,dy_sig,r) for _ax,_ay in zip(ax,ay)])
+    DQx = xi*A_w_s**2*np.array([UseModelX(_ax*(A_w_s),_ay*(B_w_s),dx_sig,dy_sig,r) for _ax,_ay in zip(ax,ay)])
+    DQy = xi*B_w_s**2*np.array([UseModelY(_ax*(A_w_s),_ay*(B_w_s),dx_sig,dy_sig,r) for _ax,_ay in zip(ax,ay)])
     return DQx,DQy
 #================================================================================
