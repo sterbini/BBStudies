@@ -1,12 +1,18 @@
 
 IR_list=['1','5']
-#IR_list=['5']
+#IR_list=['1']
 #IR_list=['1','5','2','8']
+
+# Choose the collision Model (Beam-Beam Long-Range, Ideal Wire or OCTupole)  
+# Note: Both BBLR and HO collisions are treated withthe  BBLR Model
+Model='BBLR'
+#Model='IW'
+#Model='OCT'
 
 OnlyHo=False
 OnlyLR=False
-############################
 
+############################
 import numpy as np
 import sys
 import xtrack as xt
@@ -26,6 +32,9 @@ from multiprocessing import Pool
 import time
 
 ## %%
+#### changed to in in 1_build coll changed optics 
+### opticsfile.34 change 
+# in confg.yaml 
 my_json = ('../BBStudies/Run3_configuration/'
            '2_configure_and_track/'
            'final_collider.json')
@@ -35,10 +44,11 @@ collider.build_trackers()
 
 
 ## %%
-# Here a_min = 1 so that ERR=1.e-5 in Detuning_L2 is accurate enough
-# very small amplitudes min_a << 1 may require betterintegration accuracy
+# Here a_min =.5 so that using ERR=1.e-5 in Detuning_L2 is accurate enough.
+# Very small amplitudes min_a << 1 may require better integration accuracy
 a_min = .5
-coordinates = phys.polar_grid(r_sig=np.linspace(a_min, 6.5, 5),
+a_max = 8
+coordinates = phys.polar_grid(r_sig=np.linspace(a_min, a_max, 5),
                               theta_sig=np.linspace(
                                   0.05*np.pi/2, 0.95*np.pi/2, 6),
                               emitt=[2.5e-6/7000, 2.5e-6/7000])
@@ -67,10 +77,7 @@ round_emitt = 2.5e-6
 xi = Nb*cst.r_p/(4*np.pi*round_emitt)
 number_of_ho_slices = 11
 
-
-
 ## %%
-#UseModel='IW'
 def DQx_DQy_L2(bb_name,  r,
                 dx_sig,
                 dy_sig,
@@ -84,7 +91,8 @@ def DQx_DQy_L2(bb_name,  r,
                                       A_w_s,
                                       B_w_s,
                                       r,
-                                      xi))}
+                                      xi,
+                                      Model))}
 
 
 
@@ -97,17 +105,15 @@ def Get_Footprint(IR):
         _beam = seq[-2:]
 
         # Importing Line
-
         # tracker -> twiss + survey
         if _beam == 'b1':
-            twiss[_beam] = collider[seq].twiss()  # .to_pandas(index="name")
+            twiss[_beam] = collider[seq].twiss()   
             survey[_beam] = collider[seq].survey(
-                element0='ip'+IR)  # .to_pandas(index="name")
-        elif _beam == 'b2':
-            # .to_pandas(index="name")
+                element0='ip'+IR)   
+        elif _beam == 'b2':             
             twiss[_beam] = collider[seq].twiss().reverse()
             survey[_beam] = collider[seq].survey(
-                element0='ip'+IR).reverse()  # .to_pandas(index="name")
+                element0='ip'+IR).reverse()   
 
 
 
@@ -211,9 +217,9 @@ for _IR in IR_list:
     DQx_IR,DQy_IR=Get_Footprint(IR=_IR) 
     DQx_All += DQx_IR
     DQy_All += DQy_IR
-    plt.plot(DQx_All , DQy_All ,'xr')
-    plt.grid()
-    plt.axis('square')
+    ##plt.plot(DQx_All , DQy_All ,'xr')
+    ##plt.grid()
+    #plt.axis('square')
 
 fp_x = DQx_All + Qx_0
 fp_y = DQy_All + Qy_0
@@ -237,10 +243,22 @@ for window in [0.01,0.05]:
     plt.xlim(Qx_lim)
     plt.ylim(Qy_lim)
     plt.tight_layout()
-
+plt.show()
 
 ##plt.plot(ax, ay, 'o')
 ##plt.xlabel('ax [$\sigma$]')
 ##plt.ylabel('ay [$\sigma$]')
 #plt.axis('square')
+plt.close()
+# normalized footprint must agree with old Dobrin_Example_L2.py
+plt.plot(DQx_All/xi, DQy_All/xi,
+         ls="--",marker="x",
+         label='ip1+ip5', markersize=4,color='black' )
+plt.grid()
+plt.axis('square')
+plt.title('Model='+Model)
+
+
+
+
 
