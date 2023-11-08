@@ -180,7 +180,7 @@ def DQY0(dx,dy,r):
 #===================================================
 #    Tune Shift  
 #===================================================
-def DQx_DQy(ax,ay,dx_sig,dy_sig,A_w_s,B_w_s,r,xi,Model):
+def DQx_DQy(ax,ay,dx_sig,dy_sig,A_w_s,B_w_s,r,xi,ho,Model):
     """
     Notes: 
     The function expects an array for ax,ay, and a single value for the other parameters
@@ -195,13 +195,12 @@ def DQx_DQy(ax,ay,dx_sig,dy_sig,A_w_s,B_w_s,r,xi,Model):
     """
     UseModelX=DQX
     UseModelY=DQY    
-    is_HO=np.abs(dx_sig*dy_sig) 
 # HO are treated with the BBLR Model
-    if Model=='IW' and is_HO>1: 
+    if Model=='IW' and not(ho): 
     #   A_w_s,B_w_s=1,1
         UseModelX=DQXW
         UseModelY=DQYW
-    elif Model=='OCT' and is_HO>1: 
+    elif Model=='OCT' and not(ho): 
     #   A_w_s,B_w_s=1,1
         UseModelX=DQXOC
         UseModelY=DQYOC    

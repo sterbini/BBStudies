@@ -1,14 +1,18 @@
 
+# Choose the list of IRs
 IR_list=['1','5']
 #IR_list=['1']
 #IR_list=['1','5','2','8']
+print("Using IR_list=",IR_list)
 
 # Choose the collision Model (Beam-Beam Long-Range, Ideal Wire or OCTupole)  
-# Note: Both BBLR and HO collisions are treated withthe  BBLR Model
+# Note: Both BBLR and HO collisions are treated with the BBLR Model
+
 Model='BBLR'
 #Model='IW'
-#Model='OCT'
+Model='OCT'
 
+# If one wants to use only HO or Long Range. If not, both False.  
 OnlyHo=False
 OnlyLR=False
 
@@ -45,12 +49,14 @@ collider.build_trackers()
 
 ## %%
 # Here a_min =.5 so that using ERR=1.e-5 in Detuning_L2 is accurate enough.
-# Very small amplitudes min_a << 1 may require better integration accuracy
+# Very small amplitudes min_a << 1 may require better integration accuracy )
 a_min = .5
 a_max = 8
-coordinates = phys.polar_grid(r_sig=np.linspace(a_min, a_max, 5),
+n_amp = 15
+n_wings = 16
+coordinates = phys.polar_grid(r_sig=np.linspace(a_min, a_max, n_amp),
                               theta_sig=np.linspace(
-                                  0.05*np.pi/2, 0.95*np.pi/2, 6),
+                                  0.05*np.pi/2, 0.95*np.pi/2, n_wings),
                               emitt=[2.5e-6/7000, 2.5e-6/7000])
 ax = coordinates['x_sig']
 ay = coordinates['y_sig']
@@ -83,7 +89,8 @@ def DQx_DQy_L2(bb_name,  r,
                 dy_sig,
                 A_w_s,
                 B_w_s,
-                xi):
+                xi,
+                ho):
    return {bb_name:  (dtuneL2.DQx_DQy(coordinates['x_sig'],
                                       coordinates['y_sig'],
                                       dx_sig,
@@ -92,6 +99,7 @@ def DQx_DQy_L2(bb_name,  r,
                                       B_w_s,
                                       r,
                                       xi,
+                                      ho,
                                       Model))}
 
 
@@ -169,11 +177,14 @@ def Get_Footprint(IR):
 
     ## %%
     xi_list = []
+    ho_list = []
     for my_index, bb in enumerate(name_weak):
         if bb.find('bb_ho') != -1:
             xi_list.append(xi/number_of_ho_slices)
+            ho_list.append(True)
         else:
             xi_list.append(xi)
+            ho_list.append(False)
  
 
     ## %%
@@ -185,7 +196,8 @@ def Get_Footprint(IR):
                                                dy_sig,
                                                A_w_s,
                                                B_w_s,
-                                               xi_list))
+                                               xi_list,
+                                               ho_list))
     e_time = time.time()
     print(f'Execution time for IR{IR}, {(e_time-s_time):.3f} s')
 
@@ -245,15 +257,15 @@ for window in [0.01,0.05]:
     plt.tight_layout()
 plt.show()
 
-##plt.plot(ax, ay, 'o')
-##plt.xlabel('ax [$\sigma$]')
-##plt.ylabel('ay [$\sigma$]')
-#plt.axis('square')
+plt.plot(ax, ay, 'o')
+plt.xlabel('ax [$\sigma$]')
+plt.ylabel('ay [$\sigma$]')
+plt.axis('square')
 plt.close()
 # normalized footprint must agree with old Dobrin_Example_L2.py
 plt.plot(DQx_All/xi, DQy_All/xi,
          ls="--",marker="x",
-         label='ip1+ip5', markersize=4,color='black' )
+         label=IR_list, markersize=4,color='black' )
 plt.grid()
 plt.axis('square')
 plt.title('Model='+Model)
