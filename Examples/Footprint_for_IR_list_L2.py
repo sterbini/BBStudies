@@ -10,7 +10,7 @@ print("Using IR_list=",IR_list)
 
 Model='BBLR'
 #Model='IW'
-Model='OCT'
+#Model='OCT'
 
 # If one wants to use only HO or Long Range. If not, both False.  
 OnlyHo=False
@@ -52,8 +52,8 @@ collider.build_trackers()
 # Very small amplitudes min_a << 1 may require better integration accuracy )
 a_min = .5
 a_max = 8
-n_amp = 15
-n_wings = 16
+n_amp = 5
+n_wings = 6
 coordinates = phys.polar_grid(r_sig=np.linspace(a_min, a_max, n_amp),
                               theta_sig=np.linspace(
                                   0.05*np.pi/2, 0.95*np.pi/2, n_wings),
