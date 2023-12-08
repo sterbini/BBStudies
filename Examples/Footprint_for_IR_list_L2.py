@@ -36,9 +36,6 @@ from multiprocessing import Pool
 import time
 
 ## %%
-#### changed to in in 1_build coll changed optics 
-### opticsfile.34 change 
-# in confg.yaml 
 my_json = ('../BBStudies/Run3_configuration/'
            '2_configure_and_track/'
            'final_collider.json')

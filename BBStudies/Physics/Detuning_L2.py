@@ -7,7 +7,7 @@ for a long-range collision (BBLR),  or an ideal wire.
 All functions expect a single value for all parameters.
 """
 def g(t,r):
-         return sqrt(1+(r**2-1)*t)
+    return sqrt(1+(r**2-1)*t)
 
 # 2D-Bessel LAMDA function
 
@@ -19,16 +19,17 @@ def L2(U1,U2,n):
 # Bar-kernel nominator x, or y component Q_z (z=x,y)
 # bar theta = (axb, dxb, ayb, dyb)
 
+# The in-plane vanishing tail problem cured with abs(azb-dzb)<40
 def QmzL(m,azb,dzb):
     U1 =  azb*dzb
     U2 = -azb**2/4
-#    return exp(-1/2*(azb-dzb)**2) * L2(U1,U2,m)
-    if abs(azb-dzb)<10:
+#   return exp(-1/2*(azb-dzb)**2) * L2(U1,U2,m)
+    if abs(azb-dzb)<40:
             return exp(-1/2*(azb-dzb)**2) * L2(U1,U2,m)
     else:
              return 0.0
 
-# BBLR bar-kernel nominator 
+# BBLR bar-kernel numerator  
 
 def QmkL(m,k,axb,ayb,dxb,dyb):   
     return QmzL(m,axb,dxb)*QmzL(k,ayb,dyb)
@@ -48,7 +49,7 @@ def Dmk(m,k,ax,ay,dx,dy,r):
                 dxb=xi*psix,
                 dyb=xi*psiz/_g(xi)), _i, _f)[0]
 
-# Tune-shift bar-kernel nominator 
+# Tune-shift bar-kernel   numerator
 
 def TXL( axb,ayb, dxb,dyb):
     return QmzL(0,ayb,dyb)*(
@@ -60,8 +61,7 @@ def TYL( axb,ayb, dxb,dyb):
                                          )
 
 # BBLR-model tune shift replaced with IW model for large psix
-ERR=1.e-5
-#ERR=1.e-8
+ERR=1.e-5 #1.e-8 (no need of smaller)
 
 def DQX(ax,ay,dx,dy,r):    
     psix=dx/ax/r
@@ -195,12 +195,12 @@ def DQx_DQy(ax,ay,dx_sig,dy_sig,A_w_s,B_w_s,r,xi,ho,Model):
     """
     UseModelX=DQX
     UseModelY=DQY    
-# HO are treated with the BBLR Model
+# Both LR and HO are treated with the BBLR Model
     if Model=='IW' and not(ho): 
     #   A_w_s,B_w_s=1,1
         UseModelX=DQXW
         UseModelY=DQYW
-    elif Model=='OCT' and not(ho): 
+    if Model=='OCT' and not(ho): 
     #   A_w_s,B_w_s=1,1
         UseModelX=DQXOC
         UseModelY=DQYOC    
