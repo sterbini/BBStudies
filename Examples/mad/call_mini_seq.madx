@@ -1,0 +1,13 @@
+pmass = 0.9382720882;
+nrj   =  700;
+bg   =  nrj/pmass;
+en   = .6*1.e-4; !2.5e-06;!*200; ! changes 
+epsx = en/bg;
+epsy = en/bg;
+any=0.075;
+Nb=0*1.E11; !only changes ksi (and scales plots)
+rp = 1.534698E-18;
+ksi= (Nb*rp)/(4*Pi*en);
+Beam, particle = proton, sequence=lhcb1, energy = nrj,
+          sigt=any,bv = +1, npart=Nb, sige=      1.1e-4, 
+          ex=epsx,   ey=epsy;
