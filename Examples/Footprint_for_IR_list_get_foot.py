@@ -1,4 +1,4 @@
-
+# %%
 # Choose the list of IRs
 IR_list=['1','5']
 #IR_list=['1']
@@ -9,13 +9,13 @@ print("Using IR_list=",IR_list)
 # Note: Both BBLR and HO collisions are treated with the BBLR Model
 
 Model='BBLR'
-#Model='IW'
+Model='IW'
 Model='OCT'
 
 # If one wants to use only HO or Long Range. If not, both False.  
 OnlyHo=False
-OnlyLR=False
-
+OnlyLR=True
+# %%
 ############################
 import numpy as np
 import sys
@@ -267,7 +267,31 @@ plt.grid()
 plt.axis('square')
 plt.title('Model='+Model)
 
+# %%
 
+#
+# as in mini_ring
+#
 
+# %%
+mini=collider['lhcb1']
+# %%
+rp = 1.534698E-18;
 
+bunch_intensity = Nb 
+nemitt_x = emittance_weak_nx  
+nemitt_y = emittance_weak_ny   
+gamma = energy/xp.PROTON_MASS_EV
+physemit_x = nemitt_x/gamma
+physemit_y = nemitt_y/gamma
+ksi= (bunch_intensity*rp)/(4*np.pi*nemitt_x)
+print('ksi=',{ksi})
+# %%
+do_get_foot=True
+if do_get_foot:
+#    plt.figure(1)
+    fp0 = mini.get_footprint(nemitt_x=nemitt_x, nemitt_y=nemitt_y,
+                         freeze_longitudinal=True)
+    fp0.plot(color='k', label='get_footprint')
+##############
 
