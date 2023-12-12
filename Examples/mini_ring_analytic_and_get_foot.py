@@ -16,14 +16,11 @@
 # is chosen arbitrary. The full separation is sepx=x_wk-x_str.
 
 # If flag HO_case=True, then s_bb = 0, x_str=0, so it becomes Head-On
-# possibly flat
 
 # The strong beam rms at the collision is next defined for 3 cases
 #    case=0  exactly assymetric
 #    case=1 arbitrary rms
 #    case =2 to get a desired B_w_s and flatness r 
-
-# All lengths are in meters
 
 ###########################
 
@@ -48,13 +45,9 @@ import xfields as xf
 import BBStudies.Physics.Detuning_L2 as dtuneL2
 from mad.plot_twiss import *
 
-#########
-#  basic parameters
-########
-Nb=1.e13
-x_str=0.003     #  must be > 0
-HO_case=False   # If true, will install BBLR at the IP so is is HO
-
+#  
+energy = 1000e9  
+#
 
 # %%
 #
@@ -88,14 +81,15 @@ mini.vars['kxr2b1']= -8.29579e-04
 
 
 # %%
+HO_case=False   # If true, will install BBLR at the IP so is is HO
 
-s_bb=-4  # BBLR distance from the IP in meters
+s_bb=-4  # BBLR distance from the IP
 
 if HO_case:
     s_bb=0
 
-mini.particle_ref = xp.Particles(
-                    mass0=xp.PROTON_MASS_EV, q0=1, energy0=7e12)
+#mini.particle_ref = xp.Particles(
+#                    mass0=xp.PROTON_MASS_EV, q0=1, energy0=energy)
 
 context = xo.ContextCpu()         # For CPU
 #
@@ -123,12 +117,15 @@ names=mini.element_names
 mini.build_tracker()
 
 # %%
-rp = 1.534698E-18;
+rp = 1.534698E-18
+########
+Nb=1.e13
+x_str=0.004     #  must be > 0
 
 bunch_intensity = Nb 
-nemitt_x = 6e-5       # arbitrary 
-nemitt_y = 6e-5       # arbitrary 
-energy = 678e9        # arbitrary 
+nemitt=6e-5
+nemitt_x = nemitt 
+nemitt_y = nemitt# 
 gamma = energy/xp.PROTON_MASS_EV
 physemit_x = nemitt_x/gamma
 physemit_y = nemitt_y/gamma
@@ -168,7 +165,10 @@ sigy_wk=np.sqrt(physemit_y *bety_wk)#
 # choose strong beam rms either exactly 
 # asymmetrcic or arbitrary
 
-case=1
+case=2
+if HO_case:
+    case=0
+    
 if case==0:
     sigx_str=sigy_wk 
     sigy_str=sigx_wk 
@@ -219,6 +219,9 @@ Qy_0=tw['qy']    #tw['muy'][-1]
 #  
 ########################### 
 
+ 
+# %%
+
 # %%
 # Generate ax-ay set 
 # hope it is the same as in get_footprint
@@ -229,7 +232,7 @@ n_wings = 10
 coordinates = phys.polar_grid(r_sig=np.linspace(a_min, a_max, n_amp),
                               theta_sig=np.linspace(
                                   0.05*np.pi/2, 0.95*np.pi/2, n_wings),
-                              emitt=[6e-5/energy, 6e-5/energy]) #??
+                              emitt=[nemitt/energy, nemitt/energy])
 ax = coordinates['x_sig']
 ay = coordinates['y_sig']
 
@@ -312,6 +315,8 @@ plt.plot(dQx,dQy, ls="",
          label="analytic")
 plt.grid()
 plt.axis('square')
+plt.title('Model='+Model+ " ksi="+str(round(ksi,6)))
+
 def f_part(x):
     return modf(x)[1]
 xtxt=r'$\Delta Q_x^{BBLR}[\xi]$'
@@ -319,7 +324,6 @@ ytxt=r'$\Delta Q_y^{BBLR}[\xi$'
 plt.xlabel(xtxt)
 plt.ylabel(ytxt)
 plt.grid()
-
 
 do_get_foot=True
 if do_get_foot:
@@ -331,3 +335,7 @@ if do_get_foot:
 
 plt.grid()
 plt.axis('square')
+
+
+
+# %%
