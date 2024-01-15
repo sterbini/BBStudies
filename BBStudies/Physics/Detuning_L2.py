@@ -1,14 +1,13 @@
 from numpy import *
 import scipy.integrate as integrate
 import numpy as np
-
 """
 Compute Fourier Coefficient Dmk, and   tune-shifts DQX,Y
 for a long-range collision (BBLR),  or an ideal wire.
 All functions expect a single value for all parameters.
 """
 def g(t,r):
-         return sqrt(1+(r**2-1)*t)
+    return sqrt(1+(r**2-1)*t)
 
 # 2D-Bessel LAMDA function
 
@@ -20,16 +19,17 @@ def L2(U1,U2,n):
 # Bar-kernel nominator x, or y component Q_z (z=x,y)
 # bar theta = (axb, dxb, ayb, dyb)
 
+# The in-plane vanishing tail problem cured with abs(azb-dzb)<40
 def QmzL(m,azb,dzb):
     U1 =  azb*dzb
     U2 = -azb**2/4
 #    return exp(-1/2*(azb-dzb)**2) * L2(U1,U2,m)
-    if abs(azb-dzb)<10:
+    if abs(azb-dzb)<30:
             return exp(-1/2*(azb-dzb)**2) * L2(U1,U2,m)
     else:
              return 0.0
 
-# BBLR bar-kernel nominator 
+# BBLR bar-kernel numerator  
 
 def QmkL(m,k,axb,ayb,dxb,dyb):   
     return QmzL(m,axb,dxb)*QmzL(k,ayb,dyb)
@@ -49,7 +49,7 @@ def Dmk(m,k,ax,ay,dx,dy,r):
                 dxb=xi*psix,
                 dyb=xi*psiz/_g(xi)), _i, _f)[0]
 
-# Tune-shift bar-kernel nominator 
+# Tune-shift bar-kernel   numerator
 
 def TXL( axb,ayb, dxb,dyb):
     return QmzL(0,ayb,dyb)*(
@@ -61,8 +61,7 @@ def TYL( axb,ayb, dxb,dyb):
                                          )
 
 # BBLR-model tune shift replaced with IW model for large psix
-ERR=1.e-5
-#ERR=1.e-8
+ERR=1.e-5 #1.e-8 (no need of smaller)
 
 def DQX(ax,ay,dx,dy,r):    
     psix=dx/ax/r
@@ -94,15 +93,15 @@ def DQY(ax,ay,dx,dy,r):
                 dyb=xi*psiz/_g(xi)), _i, _f, epsabs=ERR)[0]
 
 # Ideal-wire real-valued FC (when one of dx, dy is zero and k is not zero)
-def DmkW(m_in,k_in,ax,ay,dx,dy,r):   
+def DmkW(m_,k_,ax,ay,dx,dy,r):   
    if abs(dy)<0.001:
-            m=m_in
-            k=k_in
+            m=m_
+            k=k_
             psix=abs(dx/ax/r)
             psiy=ay/ax/r
    else:
-            m=k_in
-            k=m_in
+            m=k_
+            k=m_
             psix=abs(dy/ay*r)
             psiy=ax/ay*r
    def PX(fi): return psix+sin(fi)
@@ -114,15 +113,15 @@ def DmkW(m_in,k_in,ax,ay,dx,dy,r):
    return res
 
 # Ideal-wire real-valued FC (when one of dx, dy is zero and k=0 )
-def DmkWk0(m_in,k_in,ax,ay,dx,dy,r):   
+def DmkWk0(m_,k_,ax,ay,dx,dy,r):   
    if abs(dy)<0.001:
-            m=m_in
-            k=k_in
+            m=m_
+            k=k_
             psix=abs(dx/ax/r)
             psiy=ay/ax/r
    else:
-            m=k_in
-            k=m_in
+            m=k_
+            k=m_
             psix=abs(dy/ay*r)
             psiy=ax/ay*r
    def PX(fiy): return psix+sin(fiy)
@@ -132,14 +131,14 @@ def DmkWk0(m_in,k_in,ax,ay,dx,dy,r):
    res=integrate.quad(kern ,0,2*pi)[0]
    return res
 
-# Ideal wire tune-shifts 
+# Ideal-wire tune-shifts 
 def DQXW(ax,ay,dx,dy,r):
     def PX(fix): return dx+ax*r*sin(fix)
     def PY(fiy): return dy*r+ ay*sin(fiy)
     def kern(fix,fiy): return (
             -1/4/pi**2 * 2*r*sin(fix)*PX(fix)
             /( PX(fix)**2 +PY(fiy)**2 )*2/ax                           )
-    return integrate.dblquad(kern ,0, 2*pi,0,2*pi)[0]
+    return integrate.dblquad(kern ,0, 2*pi,0,2*pi, epsabs=ERR)[0]
 
 def DQYW(ax,ay,dx,dy,r):
     def PX(fix): return dx+ax*r*sin(fix)
@@ -148,7 +147,7 @@ def DQYW(ax,ay,dx,dy,r):
             -1/4/pi**2 * 2  *sin(fiy)*PY(fiy)
             /( PX(fix)**2 +PY(fiy)**2 )*2/ay
                            )
-    return integrate.dblquad(kern ,0, 2*pi,0,2*pi)[0]
+    return integrate.dblquad(kern ,0, 2*pi,0,2*pi, epsabs=ERR)[0]
 
 
 # Octupole tune-shifts  
@@ -181,7 +180,7 @@ def DQY0(dx,dy,r):
 #===================================================
 #    Tune Shift  
 #===================================================
-def DQx_DQy(ax,ay,dx_sig,dy_sig,A_w_s,B_w_s,r,xi):
+def DQx_DQy(ax,ay,dx_sig,dy_sig,A_w_s,B_w_s,r,xi,hoyes,Model):
     """
     Notes: 
     The function expects an array for ax,ay, and a single value for the other parameters
@@ -194,10 +193,23 @@ def DQx_DQy(ax,ay,dx_sig,dy_sig,A_w_s,B_w_s,r,xi):
     B_w_s         -> sigma_w_y/sigma_s_x
     fw            -> reduction factor, sig_x,y -> sig_x,y/fw
     """
+    UseModelX=DQX
+    UseModelY=DQY   
+#    A_w_s,B_w_s=1,1  check that they are in the game
+ 
+# Both LR and HO are treated with the BBLR Model
+    if Model=='IW' and not(hoyes): 
+    #   A_w_s,B_w_s=1,1
+        UseModelX=DQXW
+        UseModelY=DQYW
+    if Model=='OCT' and not(hoyes): 
+    #   A_w_s,B_w_s=1,1
+        UseModelX=DQXOC
+        UseModelY=DQYOC    
+
     ax = np.array(ax)
     ay = np.array(ay)
-
-    DQx = xi*A_w_s**2*np.array([DQX(_ax*(A_w_s),_ay*(B_w_s),dx_sig,dy_sig,r) for _ax,_ay in zip(ax,ay)])
-    DQy = xi*B_w_s**2*np.array([DQY(_ax*(A_w_s),_ay*(B_w_s),dx_sig,dy_sig,r) for _ax,_ay in zip(ax,ay)])
+    DQx = xi*A_w_s**2*np.array([UseModelX(_ax*(A_w_s),_ay*(B_w_s),dx_sig,dy_sig,r) for _ax,_ay in zip(ax,ay)])
+    DQy = xi*B_w_s**2*np.array([UseModelY(_ax*(A_w_s),_ay*(B_w_s),dx_sig,dy_sig,r) for _ax,_ay in zip(ax,ay)])
     return DQx,DQy
 #================================================================================
