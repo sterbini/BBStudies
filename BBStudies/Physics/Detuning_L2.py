@@ -178,7 +178,7 @@ def DQY0(dx,dy,r):
          return -2/dx**2
 
 #===================================================
-#    Tune Shift  
+#    Tune Shift function
 #===================================================
 def DQx_DQy(ax,ay,dx_sig,dy_sig,A_w_s,B_w_s,r,xi,hoyes,Model):
     """
@@ -209,7 +209,15 @@ def DQx_DQy(ax,ay,dx_sig,dy_sig,A_w_s,B_w_s,r,xi,hoyes,Model):
 
     ax = np.array(ax)
     ay = np.array(ay)
-    DQx = xi*A_w_s**2*np.array([UseModelX(_ax*(A_w_s),_ay*(B_w_s),dx_sig,dy_sig,r) for _ax,_ay in zip(ax,ay)])
-    DQy = xi*B_w_s**2*np.array([UseModelY(_ax*(A_w_s),_ay*(B_w_s),dx_sig,dy_sig,r) for _ax,_ay in zip(ax,ay)])
+    DQx = xi*A_w_s**2*np.array([UseModelX(_ax*A_w_s,_ay*B_w_s,dx_sig,dy_sig,r) for _ax,_ay in zip(ax,ay)])
+    DQy = xi*B_w_s**2*np.array([UseModelY(_ax*A_w_s,_ay*B_w_s,dx_sig,dy_sig,r) for _ax,_ay in zip(ax,ay)])
     return DQx,DQy
+#================================================================================
+
+#===================================================
+#    Fourier coef  function
+#===================================================
+def Dmk_fun(m,k,ax,ay,dx_sig,dy_sig,A_w_s,B_w_s,r):
+    tmp = Dmk(m,k,ax*A_w_s,ay*B_w_s,dx_sig,dy_sig,r)
+    return tmp
 #================================================================================
